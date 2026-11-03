@@ -17,6 +17,7 @@
 | Documentação de fluxo e dados | Escreveu o resumo do README, o FLOW.md e o ERD.md (8 tabelas) seguindo o plano | Conferi que o fluxo bate com as regras do PDF e com as decisões |
 | Técnica de auditoria | Escreveu o AUDIT.md: cadeia de hashes SHA-256, selo HMAC em cada lance, topo da cadeia selado no lote e selo no vínculo apelido → pessoa, com a tabela de ataques e os limites | Revisei os limites antes de aceitar, principalmente o caso de restaurar uma cópia antiga do lote, que só o comprovante detecta |
 | Segurança | Escreveu o SECURITY.md com cada valor sensível, as 4 chaves separadas e o link do comprovante assinado | Conferi que cada ponto da devolutiva do desafio anterior aparece ali |
+| Telas (Figma Make) | Mapeou o design system do projeto de ingressos, escreveu o prompt do Figma Make e revisou as telas geradas em duas rodadas, apontando estados que faltavam (as 5 recusas de lance, auditoria adulterada, sala por fase e papel) e um identificador interno exposto no comprovante | Escolhi reaproveitar o visual anterior, defini o nome leilõesPaintings, rodei as correções no Figma Make e aprovei as telas |
 | Estrutura inicial | Criou o .gitignore, a pasta docs e o texto das decisões D1 a D10 | Revisei o texto antes do primeiro commit, que fiz eu mesmo |
 
 ## O que fiz sem IA

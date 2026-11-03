@@ -40,3 +40,7 @@ O que descartei: a outra leitura possível do PDF, em que o novo fim seria o mom
 D10 - Tempo real com SSE.
 O servidor só precisa avisar a sala quando há lance novo, prorrogação ou encerramento; o lance em si vai por POST. SSE faz isso com o próprio HTTP e o navegador reconecta sozinho.
 O que descartei: WebSocket (comunicação nos dois sentidos sem necessidade e mais uma biblioteca) e consultar o servidor de tempos em tempos (atrasa a sala e gasta requisições).
+
+D11 - Direção visual reaproveitada do projeto anterior.
+O leilão usa o mesmo design system do projeto de ingressos: vermelho #E5181B como única cor de destaque, cinzas para fundo e bordas, DM Serif Display nos títulos e Outfit no resto, espaçamento em múltiplos de 4 e raios pequenos (2 a 6 px), com bordas finas no lugar de sombras. A marca é leilõesPaintings. As cores de estado saem da mesma paleta: ao vivo em verde, agendado em azul, encerrado em cinza, "você está ganhando" em verde sólido e "você foi superado" em vermelho sólido, sempre com ícone e texto, nunca só cor. O detalhe memorável é a contagem regressiva, que fica vermelha e pulsa nos últimos 2 minutos, com o aviso de que cada lance acrescenta 2 minutos (D9). As telas de média fidelidade foram geradas no Figma Make e estão em docs/design. Os seletores "Pré-visualizar" existem só no protótipo, para mostrar cada estado. Login, cadastro, painel do leiloeiro e criar lote não foram desenhados, porque reaproveitam componentes.
+O que descartei: criar uma identidade nova do zero, que custaria tempo sem ganho para o desafio.
