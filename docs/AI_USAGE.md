@@ -14,11 +14,15 @@
 | Lance inicial e incremento | Escreveu a regra do próximo lance mínimo | Pedi uma revisão específica para não confundir lance inicial, incremento mínimo e próximo lance mínimo. Isso tirou uma validação inventada ("incremento menor que o lance inicial") que recusaria lotes válidos |
 | Escolha da API | Comparou opções (Art Institute of Chicago, The Met, Discogs, Scryfall, Open Library, Pokémon TCG) | Fiquei com o Art Institute of Chicago (D2) |
 | Duração mínima do lote | Sugeriu baixar o mínimo de 10 para 2 minutos | Aceitei, para quem avalia conseguir ver anti-sniping e encerramento sem esperar |
+| Documentação de fluxo e dados | Escreveu o resumo do README, o FLOW.md e o ERD.md (8 tabelas) seguindo o plano | Conferi que o fluxo bate com as regras do PDF e com as decisões |
+| Técnica de auditoria | Escreveu o AUDIT.md: cadeia de hashes SHA-256, selo HMAC em cada lance, topo da cadeia selado no lote e selo no vínculo apelido → pessoa, com a tabela de ataques e os limites | Revisei os limites antes de aceitar, principalmente o caso de restaurar uma cópia antiga do lote, que só o comprovante detecta |
+| Segurança | Escreveu o SECURITY.md com cada valor sensível, as 4 chaves separadas e o link do comprovante assinado | Conferi que cada ponto da devolutiva do desafio anterior aparece ali |
 | Estrutura inicial | Criou o .gitignore, a pasta docs e o texto das decisões D1 a D10 | Revisei o texto antes do primeiro commit, que fiz eu mesmo |
 
 ## O que fiz sem IA
 - Criação do repositório no GitHub
 - Revisão e commit de cada etapa
+- Testei a API do Art Institute por conta própria no Bruno: montei a requisição de busca com os parâmetros de filtro e de campos, e a de imagem, e conferi as respostas
 - [completar ao longo do projeto]
 
 ## O que aprendi

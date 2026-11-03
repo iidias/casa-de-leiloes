@@ -26,7 +26,7 @@ Agendado, ao vivo e encerrado saem da comparação entre o horário atual e o in
 O que descartei: um job trocando o status no horário. Se o job atrasar, a vitrine mostra o estado errado.
 
 D7 - Histórico de lances em cadeia de hashes selada com HMAC.
-Cada lance guarda o hash do anterior, e cada hash é selado com uma chave que fica só no servidor. Assim, alteração, remoção ou inserção feita direto no banco quebra a cadeia, e quem adulterou não consegue refazer os selos sem a chave.
+Cada lance guarda o hash do anterior, e cada hash é selado com uma chave que fica só no servidor. Assim, alteração, remoção ou inserção feita direto no banco quebra a cadeia, e quem adulterou não consegue refazer os selos sem a chave. O detalhe está em docs/AUDIT.md.
 O que descartei: hash simples sem chave, porque quem tem acesso ao banco recalcularia todos os hashes depois de adulterar.
 
 D8 - Licitante aparece como "Licitante #N" em cada lote.
