@@ -7,6 +7,7 @@ import authRoutes from './routes/authRoutes.js';
 import catalogRoutes from './routes/catalogRoutes.js';
 import lotRoutes from './routes/lotRoutes.js';
 import sellerRoutes from './routes/sellerRoutes.js';
+import walletRoutes from './routes/walletRoutes.js';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/auth', authRoutes);
 app.use('/catalog', catalogRoutes);
 app.use('/lots', lotRoutes);
 app.use('/seller', sellerRoutes);
+app.use('/wallet', walletRoutes);
 
 // As próximas rotas entram aqui, conforme forem criadas.
 

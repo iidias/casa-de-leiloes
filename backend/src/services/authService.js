@@ -1,11 +1,14 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { z } from 'zod';
 import { env } from '../config/env.js';
 import { ConflictError, UnauthorizedError } from '../errors/AppError.js';
 import prisma from '../lib/prisma.js';
 
 const BCRYPT_COST = 12;
 const TOKEN_TTL = '8h';
+const ROLES = ['BIDDER', 'SELLER'];
+const isUuid = (value) => z.uuid().safeParse(value).success;
 
 // Hash de uma senha que ninguém tem. Quando o e-mail não existe, o login compara com ele,
 // para levar o mesmo tempo de quando o e-mail existe (tarefa 32). Sem isso, medir o tempo
@@ -66,6 +69,8 @@ export async function login({ email, password }) {
 export function verifyToken(token) {
   try {
     const payload = jwt.verify(token, env.jwtSecret, { algorithms: ['HS256'] });
+    // Defesa extra: mesmo com assinatura válida, só aceita o formato que o próprio servidor emite.
+    if (!isUuid(payload.sub) || !ROLES.includes(payload.role)) throw new Error('payload inesperado');
     return { sub: payload.sub, role: payload.role };
   } catch {
     // Expirado, assinatura errada ou malformado: para o cliente, tudo é "não autenticado".

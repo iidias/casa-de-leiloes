@@ -41,10 +41,10 @@ A chave fica só na variável de ambiente do servidor, nunca no banco nem no rep
 1. O hash gênese, recalculado a partir das regras atuais do lote.
 2. Para cada lance, em ordem: a sequência é 1, 2, 3… sem buracos; o hash do anterior bate; o hash recalculado bate; o selo bate.
 3. A quantidade de lances e o último hash batem com o topo selado do lote.
-4. O preço atual do lote é o valor do último lance, os valores são crescentes e cada lance respeita a regra de mínimo.
+4. O preço atual e o líder do lote são o valor e o autor do último lance. As regras de lance são refeitas a partir do histórico: cada valor respeita o mínimo (lance inicial no primeiro, anterior + incremento nos demais), ninguém cobre o próprio lance, cada lance está dentro do horário do lote e cada prorrogação bate com o horário do lance.
 5. O fim atual do lote é o "fim depois do lance" do último lance (ou o fim original, se não houve lance).
-6. Os selos dos participantes batem e cada lance pertence à pessoa do seu apelido.
-7. Em lote liquidado: o valor final é o último lance, e o comprovante tem o último hash da cadeia e uma assinatura válida.
+6. Os selos dos participantes batem, cada lance pertence à pessoa do seu apelido e os apelidos seguem a ordem do primeiro lance de cada um.
+7. Em lote liquidado: o valor final e o vencedor são os do último lance, e o comprovante tem o último hash da cadeia e uma assinatura válida.
 
 Qualquer falha marca o lote como **adulterado** e aponta em qual lance o problema aparece.
 
@@ -59,6 +59,10 @@ Qualquer falha marca o lote como **adulterado** e aponta em qual lance o problem
 | Mudar lance inicial, incremento ou horários | O hash gênese não bate (ou o fim não bate com o último lance) |
 | Trocar a pessoa por trás de um apelido | O selo do participante não bate |
 | Adulterar e recalcular todos os hashes | Os selos não batem, porque exigem a chave |
+| Mudar preço atual, líder ou fim do lote sem mexer nos lances | Não batem com o último lance |
+| Trocar a ordem de dois lances | Os elos e as regras de mínimo não batem |
+
+Os 19 ataques acima (e variações, como apagar o último lance e acertar o lote junto) foram testados contra o banco, um de cada vez. Todos foram acusados, e um lote sem adulteração continuou íntegro.
 
 ## Duas camadas de verificação
 

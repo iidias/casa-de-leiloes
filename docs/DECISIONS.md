@@ -48,3 +48,11 @@ O que descartei: criar uma identidade nova do zero, que custaria tempo sem ganho
 D12 - Horários sempre com fuso, guardados em UTC.
 O front manda início e fim com fuso (ISO 8601, por exemplo 2026-11-05T18:00:00-03:00), o banco guarda em UTC e a tela mostra no horário de Brasília. A API recusa horário sem fuso. Horário de encerramento é regra de negócio: com fuso errado, o lote encerraria uma hora antes ou depois.
 O que descartei: aceitar horário sem fuso e supor o do servidor, que no Render é UTC e encerraria o lote 3 horas antes do que o leiloeiro escolheu.
+
+D13 - Um relógio só: o do banco, lido depois da trava.
+O lance trava a linha do lote e só então lê o horário do banco. Esse horário decide se o lote está ao vivo, entra no hash do lance e define a prorrogação. A prorrogação soma 2 minutos ao fim lido depois da trava, que já pode ter sido estendido por um lance anterior. "Últimos 2 minutos" inclui exatamente 2:00 restantes, e no instante exato do fim o lote já está encerrado.
+O que descartei: ler o horário do servidor Node antes da trava. Um lance que esperasse alguns milissegundos na fila poderia ser aceito depois do fim, ou recusado antes dele, e dois lances tardios seguidos poderiam somar os 2 minutos ao mesmo fim antigo.
+
+D14 - Teto de R$ 10 milhões na carteira.
+Cada depósito vai de R$ 1 a R$ 100.000, e o saldo total não passa de R$ 10 milhões. O depósito é simulado, então sem teto bastaria repetir depósitos até estourar a coluna do banco, e a resposta viraria um erro interno. Com o teto, a resposta é uma mensagem clara.
+O que descartei: deixar sem teto e confiar só no limite de depósitos por minuto, que só atrasa o problema.
