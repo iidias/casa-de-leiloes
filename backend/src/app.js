@@ -3,6 +3,7 @@ import express from 'express';
 import helmet from 'helmet';
 import { env } from './config/env.js';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 
@@ -18,7 +19,9 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// As rotas entram aqui, conforme forem criadas.
+app.use('/auth', authRoutes);
+
+// As próximas rotas entram aqui, conforme forem criadas.
 
 app.use(notFoundHandler);
 app.use(errorHandler); // sempre por último

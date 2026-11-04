@@ -1,6 +1,14 @@
 import { ZodError } from 'zod';
 import { AppError } from '../errors/AppError.js';
 
+// Campo desconhecido (recusado pelo .strict()) ganha mensagem em português.
+function toFieldError(issue) {
+  if (issue.code === 'unrecognized_keys') {
+    return { field: issue.path.join('.'), message: `Campo não permitido: ${issue.keys.join(', ')}` };
+  }
+  return { field: issue.path.join('.'), message: issue.message };
+}
+
 // Rota que não existe: mesmo formato de erro do resto da API.
 export function notFoundHandler(req, res) {
   res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Não encontrado' } });
@@ -21,7 +29,7 @@ export function errorHandler(err, req, res, next) {
       error: {
         code: 'VALIDATION_ERROR',
         message: 'Dados inválidos',
-        details: err.issues.map((issue) => ({ field: issue.path.join('.'), message: issue.message })),
+        details: err.issues.map(toFieldError),
       },
     });
   }

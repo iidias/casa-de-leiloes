@@ -23,12 +23,14 @@
 | Schema do banco | Escreveu o schema.prisma com as 8 tabelas do ERD.md e validou com `prisma validate` | Conferi tabela por tabela contra o ERD.md e o plano |
 | Migrations | Escreveu a migration manual com os 5 CHECKs de saldo e de lote, e me orientou quando o npm instalou o `prisma` 8 (versão de teste) junto com o `@prisma/client` 7 | Fixei o Prisma na 7.10.1, rodei as migrations no Neon e conferi as 8 tabelas no Prisma Studio e as 5 constraints no SQL Editor |
 | Base da API | Escreveu prisma.js, app.js, server.js, GET /health, as classes de erro de domínio, o errorHandler (sem stack trace, formato único `{ error: { code, message, details } }`), helmet, limite de 20 kb no JSON, `trust proxy` e os limitadores de login, depósito e lance. Subiu a API num ambiente de teste e conferiu /health, rota inexistente, JSON inválido, corpo grande demais e os headers do helmet | Subi a API na minha máquina com `npm run dev` e abri /health |
+| Autenticação | Escreveu cadastro (com "Sou leiloeiro") e login com bcrypt e JWT de 8h, carteira criada na mesma transação do usuário, login com mensagem genérica e comparação contra um hash fixo quando o e-mail não existe (mesmo tempo de resposta), middlewares auth e requireRole, GET /auth/me e validação estrita com Zod (campo extra como `role` é recusado). Testou tudo contra um PostgreSQL local: cadastro, e-mail repetido, campo extra, login certo e errado, tempo de resposta, token ausente, token adulterado, papel errado e rate limit | Por iniciativa própria, quis verificar com meus olhos e testei no Bruno, contra o banco do Neon, o cadastro (201 com token) e o GET /auth/me com o token no header Authorization (200 com meus dados) |
 | Estrutura inicial | Criou o .gitignore, a pasta docs e o texto das decisões D1 a D10 | Revisei o texto antes do primeiro commit, que fiz eu mesmo |
 
 ## O que fiz sem IA
 - Criação do repositório no GitHub
 - Revisão e commit de cada etapa
 - Testei a API do Art Institute por conta própria no Bruno: montei a requisição de busca com os parâmetros de filtro e de campos, e a de imagem, e conferi as respostas
+- Testei a autenticação por conta própria no Bruno: cadastrei um usuário, peguei o token da resposta e chamei o /auth/me com ele para confirmar que a API me reconhecia, e também testei aplicando modificação no token pra ocasionar um erro proposital 
 - [completar ao longo do projeto]
 
 ## O que aprendi
