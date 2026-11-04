@@ -1,0 +1,191 @@
+// Modelo de dados da Casa de Leilões. Explicação de cada tabela em docs/ERD.md.
+// Regras gerais:
+// - dinheiro sempre em centavos inteiros (D3);
+// - ids em UUID, nunca sequenciais (não dá para adivinhar o id de um recurso alheio);
+// - horários gravados em UTC com milissegundos, porque entram no hash da auditoria (D7).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  BIDDER
+  SELLER
+}
+
+// Agendado, ao vivo e encerrado NÃO são gravados: são calculados pelo horário (D6).
+enum LotStatus {
+  ACTIVE
+  CANCELLED
+  SETTLED
+}
+
+enum LedgerType {
+  DEPOSIT
+  SETTLEMENT_DEBIT
+  SETTLEMENT_CREDIT
+  CANCEL_RELEASE
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+
+  wallet        Wallet?
+  lotsSelling   Lot[]            @relation("LotSeller")
+  lotsLeading   Lot[]            @relation("LotLeader")
+  lotsWon       Lot[]            @relation("LotWinner")
+  participation LotParticipant[]
+  bids          Bid[]
+  receiptsWon   Receipt[]        @relation("ReceiptWinner")
+  receiptsSold  Receipt[]        @relation("ReceiptSeller")
+}
+
+// Disponível = totalCents - committedCents, calculado. CHECKs no banco (tarefa 24) impedem
+// comprometido negativo ou maior que o total (D4).
+model Wallet {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @unique @db.Uuid
+  totalCents     Int      @default(0)
+  committedCents Int      @default(0)
+  updatedAt      DateTime @updatedAt
+
+  user    User          @relation(fields: [userId], references: [id])
+  entries LedgerEntry[]
+}
+
+// Extrato: só dinheiro que entra ou sai do total. Comprometer/liberar não gera lançamento.
+model LedgerEntry {
+  id          String     @id @default(uuid()) @db.Uuid
+  walletId    String     @db.Uuid
+  type        LedgerType
+  amountCents Int
+  lotId       String?    @db.Uuid
+  createdAt   DateTime   @default(now())
+
+  wallet Wallet @relation(fields: [walletId], references: [id])
+  lot    Lot?   @relation(fields: [lotId], references: [id])
+
+  @@index([walletId, createdAt])
+}
+
+model Lot {
+  id       String @id @default(uuid()) @db.Uuid
+  sellerId String @db.Uuid
+
+  // Snapshot da obra: o lote não depende da API externa depois de criado.
+  externalSource String  @default("AIC")
+  externalId     String
+  title          String
+  artist         String?
+  dateDisplay    String?
+  medium         String?
+  dimensions     String?
+  description    String?
+
+  // Regras definidas pelo leiloeiro (fixas depois da criação).
+  startingPriceCents Int // lance inicial = "valor mínimo" do PDF
+  minIncrementCents  Int
+  startsAt           DateTime
+  endsAt             DateTime // muda com o anti-sniping (D9)
+  originalEndsAt     DateTime
+
+  // Estado da disputa.
+  currentPriceCents Int?
+  leaderId          String? @db.Uuid
+  bidCount          Int     @default(0)
+
+  // Topo da cadeia de auditoria (docs/AUDIT.md).
+  headHash String
+  headSeal String
+
+  status          LotStatus @default(ACTIVE)
+  settledAt       DateTime?
+  winnerId        String?   @db.Uuid
+  finalPriceCents Int?
+  createdAt       DateTime  @default(now())
+
+  seller       User             @relation("LotSeller", fields: [sellerId], references: [id])
+  leader       User?            @relation("LotLeader", fields: [leaderId], references: [id])
+  winner       User?            @relation("LotWinner", fields: [winnerId], references: [id])
+  image        LotImage?
+  participants LotParticipant[]
+  bids         Bid[]
+  receipt      Receipt?
+  ledger       LedgerEntry[]
+
+  @@index([status, endsAt])
+  @@index([sellerId])
+}
+
+// Bytes da imagem baixada na criação: a vitrine continua com foto se a API cair.
+model LotImage {
+  lotId    String @id @db.Uuid
+  mimeType String
+  bytes    Bytes
+
+  lot Lot @relation(fields: [lotId], references: [id])
+}
+
+// "Licitante #N" por lote (D8). O selo HMAC impede trocar a pessoa por trás do apelido.
+model LotParticipant {
+  id        String   @id @default(uuid()) @db.Uuid
+  lotId     String   @db.Uuid
+  userId    String   @db.Uuid
+  alias     Int
+  seal      String
+  createdAt DateTime @default(now())
+
+  lot  Lot  @relation(fields: [lotId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([lotId, userId])
+  @@unique([lotId, alias])
+}
+
+model Bid {
+  id             String   @id @default(uuid()) @db.Uuid
+  lotId          String   @db.Uuid
+  seq            Int
+  bidderId       String   @db.Uuid
+  alias          Int
+  amountCents    Int
+  createdAt      DateTime // sem default: o MESMO valor entra no hash (tarefa 54)
+  endsAtAfter    DateTime
+  prevHash       String
+  hash           String
+  seal           String
+  idempotencyKey String?
+
+  lot    Lot  @relation(fields: [lotId], references: [id])
+  bidder User @relation(fields: [bidderId], references: [id])
+
+  @@unique([lotId, seq])
+  @@unique([bidderId, idempotencyKey])
+}
+
+// Um comprovante por lote, no máximo. linkId é a parte aleatória do link público;
+// a assinatura do link NÃO é gravada (docs/SECURITY.md).
+model Receipt {
+  id             String   @id @default(uuid()) @db.Uuid
+  lotId          String   @unique @db.Uuid
+  winnerId       String   @db.Uuid
+  sellerId       String   @db.Uuid
+  amountCents    Int
+  finalChainHash String
+  issuedAt       DateTime
+  signature      String
+  linkId         String?  @unique
+
+  lot    Lot  @relation(fields: [lotId], references: [id])
+  winner User @relation("ReceiptWinner", fields: [winnerId], references: [id])
+  seller User @relation("ReceiptSeller", fields: [sellerId], references: [id])
+}
