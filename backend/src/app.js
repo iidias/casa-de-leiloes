@@ -4,6 +4,9 @@ import helmet from 'helmet';
 import { env } from './config/env.js';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
+import catalogRoutes from './routes/catalogRoutes.js';
+import lotRoutes from './routes/lotRoutes.js';
+import sellerRoutes from './routes/sellerRoutes.js';
 
 const app = express();
 
@@ -20,6 +23,9 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/auth', authRoutes);
+app.use('/catalog', catalogRoutes);
+app.use('/lots', lotRoutes);
+app.use('/seller', sellerRoutes);
 
 // As próximas rotas entram aqui, conforme forem criadas.
 

@@ -65,3 +65,11 @@ export class BidRejectedError extends AppError {
     super(BID_STATUS[code], code, message, details);
   }
 }
+
+// 502: a API externa (Art Institute) falhou, demorou ou respondeu algo inesperado.
+// Só a busca de itens e a criação de lote dependem dela (tarefa 39).
+export class ExternalServiceError extends AppError {
+  constructor(message = 'Catálogo indisponível no momento. Os lotes já criados continuam funcionando.') {
+    super(502, 'CATALOG_UNAVAILABLE', message);
+  }
+}
