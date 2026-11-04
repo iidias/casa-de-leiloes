@@ -1,0 +1,26 @@
+import cors from 'cors';
+import express from 'express';
+import helmet from 'helmet';
+import { env } from './config/env.js';
+import { errorHandler, notFoundHandler } from './middlewares/errorHandler.js';
+
+const app = express();
+
+// No Render a requisição chega por um proxy. Sem isto, o rate limit enxerga o IP
+// do proxy e bloqueia todo mundo junto.
+app.set('trust proxy', 1);
+
+app.use(helmet());
+app.use(cors({ origin: env.corsOrigin }));
+app.use(express.json({ limit: '20kb' }));
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+// As rotas entram aqui, conforme forem criadas.
+
+app.use(notFoundHandler);
+app.use(errorHandler); // sempre por último
+
+export default app;

@@ -22,6 +22,7 @@
 | Validação do ambiente | Escreveu o src/config/env.js com Zod: o servidor não sobe se faltar variável, se um segredo tiver menos de 32 bytes ou se dois segredos forem iguais. Testou os três casos antes de entregar | Conferi as mensagens de erro |
 | Schema do banco | Escreveu o schema.prisma com as 8 tabelas do ERD.md e validou com `prisma validate` | Conferi tabela por tabela contra o ERD.md e o plano |
 | Migrations | Escreveu a migration manual com os 5 CHECKs de saldo e de lote, e me orientou quando o npm instalou o `prisma` 8 (versão de teste) junto com o `@prisma/client` 7 | Fixei o Prisma na 7.10.1, rodei as migrations no Neon e conferi as 8 tabelas no Prisma Studio e as 5 constraints no SQL Editor |
+| Base da API | Escreveu prisma.js, app.js, server.js, GET /health, as classes de erro de domínio, o errorHandler (sem stack trace, formato único `{ error: { code, message, details } }`), helmet, limite de 20 kb no JSON, `trust proxy` e os limitadores de login, depósito e lance. Subiu a API num ambiente de teste e conferiu /health, rota inexistente, JSON inválido, corpo grande demais e os headers do helmet | Subi a API na minha máquina com `npm run dev` e abri /health |
 | Estrutura inicial | Criou o .gitignore, a pasta docs e o texto das decisões D1 a D10 | Revisei o texto antes do primeiro commit, que fiz eu mesmo |
 
 ## O que fiz sem IA
