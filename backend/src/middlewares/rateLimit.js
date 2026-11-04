@@ -17,6 +17,16 @@ export const loginLimiter = rateLimit({
   handler: tooMany('Muitas tentativas de login. Aguarde um minuto e tente de novo.'),
 });
 
+// Cadastro: como ele avisa "e-mail já cadastrado", sem limite daria para testar milhares
+// de e-mails e descobrir quem tem conta. Mesmo limite do login, por IP.
+export const registerLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  handler: tooMany('Muitas tentativas de cadastro. Aguarde um minuto e tente de novo.'),
+});
+
 export const depositLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 10,

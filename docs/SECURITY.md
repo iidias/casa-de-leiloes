@@ -47,5 +47,6 @@ Lote de outro leiloeiro, comprovante de outro licitante ou lote cancelado visto 
 - Toda entrada passa por validação com Zod em modo estrito: campo desconhecido é recusado, então o cliente não consegue escolher dono, status ou vencedor.
 - Dinheiro só em centavos inteiros (D3).
 - Login com mensagem genérica e o mesmo tempo de resposta, exista o e-mail ou não.
-- Limite de requisições no login, no depósito e no lance.
+- Limite de requisições no cadastro, no login, no depósito e no lance.
+- O cadastro avisa quando o e-mail já está em uso. É uma escolha consciente: sem confirmação por e-mail (fora do escopo do desafio), não há outro jeito de a pessoa saber por que o cadastro falhou. Para isso não virar uma forma de descobrir em massa quem tem conta, o cadastro tem o mesmo limite de tentativas do login. O login, por sua vez, nunca diz se o e-mail existe.
 - Erro inesperado responde mensagem genérica, sem stack trace.

@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { auth } from '../middlewares/auth.js';
-import { loginLimiter } from '../middlewares/rateLimit.js';
+import { loginLimiter, registerLimiter } from '../middlewares/rateLimit.js';
 import { getMe, login, register } from '../services/authService.js';
 import { loginSchema, registerSchema } from '../validators/authSchemas.js';
 
 const router = Router();
 
 // Cadastro: padrão BIDDER; com "isSeller": true, SELLER.
-router.post('/register', async (req, res) => {
+router.post('/register', registerLimiter, async (req, res) => {
   const data = registerSchema.parse(req.body);
   const result = await register(data);
   res.status(201).json(result);

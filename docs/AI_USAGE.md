@@ -1,7 +1,8 @@
 # Uso de IA neste projeto
 
 ## Ferramentas
-- Claude (Anthropic): leitura do desafio, planejamento, revisão de regras e escrita da documentação inicial.
+- Claude (Anthropic): leitura do desafio, planejamento, revisão de regras, documentação e código do backend (sempre revisado e testado por mim antes do commit).
+- Figma Make: geração das telas de média fidelidade e do código de protótipo em `docs/design/` (não é o frontend da aplicação).
 
 ## Onde usei
 
@@ -24,6 +25,7 @@
 | Migrations | Escreveu a migration manual com os 5 CHECKs de saldo e de lote, e me orientou quando o npm instalou o `prisma` 8 (versão de teste) junto com o `@prisma/client` 7 | Fixei o Prisma na 7.10.1, rodei as migrations no Neon e conferi as 8 tabelas no Prisma Studio e as 5 constraints no SQL Editor |
 | Base da API | Escreveu prisma.js, app.js, server.js, GET /health, as classes de erro de domínio, o errorHandler (sem stack trace, formato único `{ error: { code, message, details } }`), helmet, limite de 20 kb no JSON, `trust proxy` e os limitadores de login, depósito e lance. Subiu a API num ambiente de teste e conferiu /health, rota inexistente, JSON inválido, corpo grande demais e os headers do helmet | Subi a API na minha máquina com `npm run dev` e abri /health |
 | Autenticação | Escreveu cadastro (com "Sou leiloeiro") e login com bcrypt e JWT de 8h, carteira criada na mesma transação do usuário, login com mensagem genérica e comparação contra um hash fixo quando o e-mail não existe (mesmo tempo de resposta), middlewares auth e requireRole, GET /auth/me e validação estrita com Zod (campo extra como `role` é recusado). Testou tudo contra um PostgreSQL local: cadastro, e-mail repetido, campo extra, login certo e errado, tempo de resposta, token ausente, token adulterado, papel errado e rate limit | Por iniciativa própria, quis verificar com meus olhos e testei no Bruno, contra o banco do Neon, o cadastro (201 com token) e o GET /auth/me com o token no header Authorization (200 com meus dados) |
+| Auditoria antes de seguir | Revisou tudo o que foi feito até a tarefa 37 contra o PDF e apontou: três arquivos vazios commitados por acidente, o Figma Make faltando na lista de ferramentas, o cadastro sem limite de tentativas e o Prisma Client que não era gerado no `npm install` | Pedi essa revisão antes de continuar e aprovei as correções: removi os arquivos, limitei o cadastro e acrescentei o `postinstall` |
 | Estrutura inicial | Criou o .gitignore, a pasta docs e o texto das decisões D1 a D10 | Revisei o texto antes do primeiro commit, que fiz eu mesmo |
 
 ## O que fiz sem IA
