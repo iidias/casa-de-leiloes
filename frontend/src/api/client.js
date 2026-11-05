@@ -100,6 +100,18 @@ export async function apiFetch(endpoint, options = {}) {
   return data;
 }
 
+// Erros de campo da validação ({ field, message }[]) num objeto { campo: mensagem },
+// para cada mensagem aparecer embaixo do próprio campo.
+export function fieldErrorsFrom(error) {
+  const result = {};
+  if (Array.isArray(error?.details)) {
+    for (const item of error.details) {
+      if (item?.field && !result[item.field]) result[item.field] = item.message;
+    }
+  }
+  return result;
+}
+
 export const api = {
   get: (endpoint, options) => apiFetch(endpoint, { ...options, method: 'GET' }),
   post: (endpoint, body, options) => apiFetch(endpoint, { ...options, method: 'POST', body }),

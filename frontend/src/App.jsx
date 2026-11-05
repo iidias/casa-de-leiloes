@@ -5,9 +5,11 @@ import Layout from './components/Layout.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
 import Card from './components/Card.jsx';
 import EmptyState from './components/EmptyState.jsx';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
 import NotFound from './pages/NotFound.jsx';
 
-// Provisório: cada rota ganha a tela de verdade nas tarefas 86 a 95,
+// Provisório: cada rota ganha a tela de verdade nas tarefas 87 a 95,
 // e este marcador sai quando a última tela entrar.
 function EmConstrucao({ tela }) {
   return (
@@ -25,8 +27,8 @@ export default function App() {
   return (
     <Routes>
       {/* Login e cadastro têm tela cheia própria, sem o header. */}
-      <Route path="/login" element={<EmConstrucao tela="Entrar" />} />
-      <Route path="/cadastro" element={<EmConstrucao tela="Criar conta" />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/cadastro" element={<Register />} />
 
       <Route element={<Layout />}>
         {/* Públicas: a API também não pede login para vitrine, sala, auditoria e comprovante. */}
