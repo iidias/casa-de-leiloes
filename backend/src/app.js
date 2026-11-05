@@ -6,6 +6,8 @@ import { errorHandler, notFoundHandler } from './middlewares/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import catalogRoutes from './routes/catalogRoutes.js';
 import lotRoutes from './routes/lotRoutes.js';
+import meRoutes from './routes/meRoutes.js';
+import publicRoutes from './routes/publicRoutes.js';
 import sellerRoutes from './routes/sellerRoutes.js';
 import walletRoutes from './routes/walletRoutes.js';
 
@@ -28,6 +30,8 @@ app.use('/catalog', catalogRoutes);
 app.use('/lots', lotRoutes);
 app.use('/seller', sellerRoutes);
 app.use('/wallet', walletRoutes);
+app.use('/me', meRoutes);
+app.use('/public', publicRoutes);
 
 // As próximas rotas entram aqui, conforme forem criadas.
 

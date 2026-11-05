@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "test": "vitest run --no-file-parallelism",
+    "seed": "node prisma/seed.js",
+    "seed:obras": "node prisma/fixtures/baixar-obras.js",
     "check:env": "node -e \"import('./src/config/env.js').then(() => console.log('Variáveis de ambiente OK.'))\"",
     "postinstall": "prisma generate"
   },

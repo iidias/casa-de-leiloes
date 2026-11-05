@@ -133,7 +133,16 @@ export async function getArtwork(externalId) {
 export async function downloadImage(imageUrl) {
   let res;
   try {
-    res = await fetch(imageUrl, { signal: AbortSignal.timeout(IMAGE_TIMEOUT_MS) });
+    // O servidor de imagens (IIIF) fica atrás de uma proteção contra robôs que recusa (403) pedidos
+    // sem identificação. Vai o mesmo AIC-User-Agent da API, mais um User-Agent com contato.
+    res = await fetch(imageUrl, {
+      headers: {
+        Accept: 'image/jpeg,image/png',
+        'User-Agent': `casa-de-leiloes/1.0 (${env.aicContact})`,
+        'AIC-User-Agent': `casa-de-leiloes (${env.aicContact})`,
+      },
+      signal: AbortSignal.timeout(IMAGE_TIMEOUT_MS),
+    });
   } catch (err) {
     console.error('[AIC] falha ao baixar imagem:', err.message);
     throw new ExternalServiceError();

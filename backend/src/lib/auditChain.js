@@ -1,5 +1,6 @@
 import { env } from '../config/env.js';
 import { hmacHex, safeEqual, sha256Hex } from './crypto.js';
+import { receiptSignatureValid } from './receiptSignature.js';
 
 // Cadeia de auditoria dos lances (tarefa 54). A técnica está explicada em docs/AUDIT.md.
 //
@@ -78,9 +79,8 @@ const brl = (cents) => (cents / 100).toLocaleString('pt-BR', { style: 'currency'
 
 // Verificação completa, feita no servidor (só ele tem a chave). Itens numerados como em docs/AUDIT.md.
 // Recebe o lote (com sellerId, leaderId, winnerId), os lances (com bidderId) e os participantes.
-// Devolve a lista de problemas em português; lista vazia = íntegro.
-// O item 7 (comprovante) entra na tarefa 69, quando o comprovante existir.
-export function verifyChain(lot, bids, participants) {
+// `receipt` é o comprovante do lote (ou null). Devolve a lista de problemas em português; lista vazia = íntegro.
+export function verifyChain(lot, bids, participants, receipt = null) {
   const problems = [];
   const ordered = [...bids].sort((a, b) => a.seq - b.seq);
 
@@ -169,10 +169,32 @@ export function verifyChain(lot, bids, participants) {
   // 5. Fim atual = fim depois do último lance (ou o original).
   if (lot.endsAt.getTime() !== currentEndsAt.getTime()) problems.push('O horário de fim do lote foi alterado');
 
-  // 7. Lote liquidado: valor final e vencedor = último lance.
+  // 7. Lote liquidado: valor final e vencedor = último lance; comprovante amarrado ao fim da cadeia e assinado.
   if (lot.status === 'SETTLED') {
     if ((last?.amountCents ?? null) !== lot.finalPriceCents) problems.push('O valor de arremate não é o último lance');
     if ((last?.bidderId ?? null) !== lot.winnerId) problems.push('O vencedor registrado não é o autor do último lance');
+    if (last && !receipt) problems.push('Lote arrematado sem comprovante');
+  }
+  if (receipt) {
+    if (lot.status !== 'SETTLED' || !last) problems.push('Existe comprovante para um lote que não foi arrematado');
+    if (receipt.finalChainHash !== lot.headHash) problems.push('O comprovante foi emitido para outro estado do histórico');
+    if (receipt.amountCents !== lot.finalPriceCents || receipt.winnerId !== lot.winnerId || receipt.sellerId !== lot.sellerId) {
+      problems.push('O comprovante não confere com o resultado do lote');
+    }
+    const winner = participants.find((p) => p.userId === receipt.winnerId);
+    const signed = winner && receiptSignatureValid(
+      {
+        id: receipt.id,
+        lotId: lot.id,
+        title: lot.title,
+        winnerAlias: winner.alias,
+        amountCents: receipt.amountCents,
+        issuedAt: receipt.issuedAt,
+        finalChainHash: receipt.finalChainHash,
+      },
+      receipt.signature,
+    );
+    if (!signed) problems.push('Assinatura do comprovante inválida');
   }
 
   return { genesis, problems };
