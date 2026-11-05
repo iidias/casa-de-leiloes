@@ -1,0 +1,10 @@
+{
+  "description": "Apresenta as telas de um sistema organizadas conforme regras de negócio e diretrizes de design para facilitar a navegação e o uso.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
