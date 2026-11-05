@@ -61,8 +61,10 @@ Qualquer falha marca o lote como **adulterado** e aponta em qual lance o problem
 | Adulterar e recalcular todos os hashes | Os selos não batem, porque exigem a chave |
 | Mudar preço atual, líder ou fim do lote sem mexer nos lances | Não batem com o último lance |
 | Trocar a ordem de dois lances | Os elos e as regras de mínimo não batem |
+| Alterar o valor ou o vencedor do comprovante | A assinatura do comprovante não bate, e ele não confere com o resultado do lote |
+| Apagar o comprovante de um lote arrematado | A auditoria acusa "lote arrematado sem comprovante" |
 
-Os 19 ataques acima (e variações, como apagar o último lance e acertar o lote junto) foram testados contra o banco, um de cada vez. Todos foram acusados, e um lote sem adulteração continuou íntegro.
+Os 19 ataques aos lances (e variações, como apagar o último lance e acertar o lote junto) e os 3 ataques ao comprovante foram testados contra o banco, um de cada vez. Todos foram acusados, e um lote sem adulteração continuou íntegro.
 
 ## Duas camadas de verificação
 

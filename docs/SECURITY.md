@@ -25,6 +25,7 @@ Cada finalidade tem a sua chave, para o vazamento de uma não comprometer as out
 - Cada chave tem pelo menos 32 bytes aleatórios, gerados com `openssl rand -base64 48`.
 - O servidor **não sobe** se faltar alguma chave ou se ela for curta.
 - As chaves de produção são diferentes das de desenvolvimento.
+- Trocar uma chave em produção invalida o que ela assinou: com outra `AUDIT_HMAC_KEY`, a auditoria acusaria todos os lotes como adulterados; com outra `RECEIPT_SIGNING_KEY`, os comprovantes; com outra `RECEIPT_LINK_KEY`, os links já enviados param de abrir. Por isso as chaves não são trocadas depois do seed. Se for preciso, rode o seed de novo.
 - Toda comparação de assinatura usa `crypto.timingSafeEqual`.
 
 ## Link do comprovante
@@ -34,7 +35,9 @@ O link tem o formato `r1.<id>.<assinatura>`:
 - a assinatura é um HMAC-SHA256 do `id`, com `RECEIPT_LINK_KEY`;
 - a assinatura é conferida **antes** de consultar o banco, então um link forjado nunca chega ao banco;
 - a assinatura **não é gravada** no banco, então um vazamento do banco não entrega links prontos;
-- o dono pode gerar um link novo, e o antigo para de funcionar na hora.
+- o dono pode gerar um link novo, e o antigo para de funcionar na hora;
+- link com formato errado, assinatura errada, revogado ou inexistente recebem **a mesma resposta 404**, então quem testa não distingue um caso do outro;
+- o link pronto só aparece em rotas autenticadas do próprio dono, e a resposta pública vai com `Cache-Control: no-store`.
 
 A página pública do comprovante mostra só o item, o valor, a data, o apelido do vencedor ("Licitante #N") e o selo de integridade. Não mostra nome, e-mail ou id de ninguém, nem o próprio link.
 
@@ -48,5 +51,6 @@ Lote de outro leiloeiro, comprovante de outro licitante ou lote cancelado visto 
 - Dinheiro só em centavos inteiros (D3).
 - Login com mensagem genérica e o mesmo tempo de resposta, exista o e-mail ou não.
 - Limite de requisições no cadastro, no login, no depósito e no lance.
+- Tempo real (SSE): no máximo 20 conexões abertas por endereço e 2000 no total, para um só cliente não ocupar as vagas de todo mundo.
 - O cadastro avisa quando o e-mail já está em uso. É uma escolha consciente: sem confirmação por e-mail (fora do escopo do desafio), não há outro jeito de a pessoa saber por que o cadastro falhou. Para isso não virar uma forma de descobrir em massa quem tem conta, o cadastro tem o mesmo limite de tentativas do login. O login, por sua vez, nunca diz se o e-mail existe.
 - Erro inesperado responde mensagem genérica, sem stack trace.

@@ -56,3 +56,7 @@ O que descartei: ler o horário do servidor Node antes da trava. Um lance que es
 D14 - Teto de R$ 10 milhões na carteira.
 Cada depósito vai de R$ 1 a R$ 100.000, e o saldo total não passa de R$ 10 milhões. O depósito é simulado, então sem teto bastaria repetir depósitos até estourar a coluna do banco, e a resposta viraria um erro interno. Com o teto, a resposta é uma mensagem clara.
 O que descartei: deixar sem teto e confiar só no limite de depósitos por minuto, que só atrasa o problema.
+
+D15 - Liquidação no fim do lote ou no primeiro acesso depois dele.
+Um encerrador roda a cada 5 s e liquida os lotes vencidos. Além dele, a vitrine, o lote, a auditoria, as rotas do licitante, o painel do leiloeiro e o próprio lance liquidam o lote vencido que encontrarem antes de responder. O Render gratuito dorme depois de 15 minutos sem acesso e, dormindo, o encerrador não roda: sem a segunda peça, quem abrisse o site veria um lote encerrado sem vencedor e sem comprovante. Liquidar duas vezes não debita duas vezes: a liquidação trava o lote e só segue se ele ainda estiver ativo e vencido, e o comprovante é único por lote. Um lote que falhe ao liquidar não impede os outros de fechar.
+O que descartei: só o encerrador (falha com o servidor dormindo) e um agendador externo (mais uma peça para configurar sem ganho para o desafio).
