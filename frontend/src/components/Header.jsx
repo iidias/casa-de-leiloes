@@ -1,10 +1,12 @@
 // Header global: marca, navegação por papel, quem está logado e "Sair".
 // Estrutura do header do projeto anterior com o visual do protótipo.
 // No celular a navegação vira um menu recolhido.
-// O saldo disponível do licitante entra na tarefa 96.
+// Para o licitante, mostra o saldo disponível (PDF: volta ao disponível assim que é superado).
 import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { LogIn, LogOut, Menu, X } from 'lucide-react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { LogIn, LogOut, Menu, WalletCards, X } from 'lucide-react';
+import { useWallet } from '../context/WalletContext.jsx';
+import { formatBRL } from '../lib/money.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { ROLE_LABELS, homePathForRole } from '../lib/format.js';
 import Button from './Button.jsx';
@@ -31,6 +33,7 @@ function initials(name = '') {
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
+  const { wallet, isBidder } = useWallet();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -53,11 +56,24 @@ export default function Header() {
               {item.label}
             </NavLink>
           ))}
+          {/* No celular, "Sair" fica dentro do menu para o header caber em telas estreitas. */}
+          {isAuthenticated && (
+            <button type="button" className="nav-logout" onClick={handleLogout}>
+              <LogOut size={16} aria-hidden="true" /> Sair
+            </button>
+          )}
         </nav>
 
         <div className="account">
           {isAuthenticated ? (
             <>
+              {isBidder && (
+                <Link to="/carteira" className="available" title="Saldo disponível para lances">
+                  <WalletCards size={16} aria-hidden="true" />
+                  <span>Disponível</span>
+                  <strong className="money">{wallet ? formatBRL(wallet.availableCents) : '—'}</strong>
+                </Link>
+              )}
               <span className="avatar" aria-hidden="true">
                 {initials(user.name)}
               </span>
@@ -65,7 +81,7 @@ export default function Header() {
                 <strong>{user.name}</strong>
                 <span>{ROLE_LABELS[user.role] ?? user.role}</span>
               </div>
-              <Button variant="ghost" size="sm" icon={LogOut} onClick={handleLogout} aria-label="Sair">
+              <Button variant="ghost" size="sm" icon={LogOut} onClick={handleLogout} aria-label="Sair" className="account-logout">
                 <span className="hidden lg:inline">Sair</span>
               </Button>
             </>
