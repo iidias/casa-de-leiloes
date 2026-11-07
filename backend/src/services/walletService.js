@@ -12,11 +12,13 @@ import prisma from '../lib/prisma.js';
 // estourariam a coluna e o banco responderia erro 500. Com teto, a resposta é clara.
 export const WALLET_MAX_CENTS = 1_000_000_000; // R$ 10.000.000,00
 
-export const toWalletView = (wallet) => ({
-  totalCents: wallet.totalCents,
-  committedCents: wallet.committedCents,
-  availableCents: wallet.totalCents - wallet.committedCents,
-});
+// As colunas de saldo são BIGINT (o Prisma devolve BigInt). Na resposta viram número comum:
+// mesmo o maior saldo possível cabe com folga no inteiro seguro do JavaScript (R$ 90 trilhões).
+export const toWalletView = (wallet) => {
+  const total = Number(wallet.totalCents);
+  const committed = Number(wallet.committedCents);
+  return { totalCents: total, committedCents: committed, availableCents: total - committed };
+};
 
 export async function getWallet(userId) {
   const wallet = await prisma.wallet.findUnique({
@@ -44,9 +46,10 @@ export async function deposit(userId, amountCents) {
       SELECT id, "totalCents" FROM "Wallet" WHERE "userId" = ${userId}::uuid FOR UPDATE`;
     if (!locked) throw new AppError(401, 'UNAUTHORIZED', 'Sessão inválida. Faça login de novo.');
 
-    if (locked.totalCents + amountCents > WALLET_MAX_CENTS) {
+    const total = Number(locked.totalCents);
+    if (total + amountCents > WALLET_MAX_CENTS) {
       throw new AppError(422, 'WALLET_LIMIT', `A carteira pode ter no máximo ${formatBRL(WALLET_MAX_CENTS)} de saldo total`, {
-        maxDepositCents: WALLET_MAX_CENTS - locked.totalCents,
+        maxDepositCents: WALLET_MAX_CENTS - total,
       });
     }
 

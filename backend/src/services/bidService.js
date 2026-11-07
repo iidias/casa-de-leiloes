@@ -128,7 +128,7 @@ export async function placeBid({ lotId: requestedLotId, userId, amountCents, ide
 
       // 3.6 Saldo: disponível da carteira TRAVADA. Dinheiro que já lidera outro lote está comprometido,
       //     então R$ 100 não lideram dois lotes de R$ 80.
-      const available = myWallet.totalCents - myWallet.committedCents;
+      const available = Number(myWallet.totalCents) - Number(myWallet.committedCents); // BIGINT → número
       if (amountCents > available) {
         throw new BidRejectedError('INSUFFICIENT_BALANCE', `Saldo disponível insuficiente: ${formatBRL(available)}`, {
           availableCents: available,

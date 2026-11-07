@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { ConflictError, NotFoundError, ValidationError } from '../errors/AppError.js';
+import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../errors/AppError.js';
 import { genesisHash, headSeal } from '../lib/auditChain.js';
 import { publish } from '../lib/events.js';
 import { lotPhase } from '../lib/lotPhase.js';
@@ -61,6 +61,11 @@ function toCard(lot, now) {
 // ---------- Criação (tarefas 41 a 43) ----------
 
 export async function createLot(sellerId, data) {
+  // Token válido de uma conta que não existe mais (ex.: o seed rodou de novo): sessão inválida,
+  // e não erro 500 do banco. Conferido antes de chamar a API externa.
+  const seller = await prisma.user.findFirst({ where: { id: sellerId, role: 'SELLER' }, select: { id: true } });
+  if (!seller) throw new UnauthorizedError('Sessão inválida. Faça login de novo.');
+
   // O item é buscado AQUI, no servidor, pelo id. Título, atributos e imagem nunca vêm do front:
   // senão o leiloeiro poderia criar um lote com qualquer imagem.
   const artwork = await getArtwork(data.externalId);

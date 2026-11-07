@@ -60,3 +60,8 @@ O que descartei: deixar sem teto e confiar só no limite de depósitos por minut
 D15 - Liquidação no fim do lote ou no primeiro acesso depois dele.
 Um encerrador roda a cada 5 s e liquida os lotes vencidos. Além dele, a vitrine, o lote, a auditoria, as rotas do licitante, o painel do leiloeiro e o próprio lance liquidam o lote vencido que encontrarem antes de responder. O Render gratuito dorme depois de 15 minutos sem acesso e, dormindo, o encerrador não roda: sem a segunda peça, quem abrisse o site veria um lote encerrado sem vencedor e sem comprovante. Liquidar duas vezes não debita duas vezes: a liquidação trava o lote e só segue se ele ainda estiver ativo e vencido, e o comprovante é único por lote. Um lote que falhe ao liquidar não impede os outros de fechar.
 O que descartei: só o encerrador (falha com o servidor dormindo) e um agendador externo (mais uma peça para configurar sem ganho para o desafio).
+
+D16 - Saldo da carteira em BIGINT.
+O total e o comprometido da carteira são colunas BIGINT no banco; lote, lance e depósito continuam em inteiro comum. O licitante tem teto de R$ 10 milhões (D14), mas o leiloeiro recebe o valor de cada lote vendido, sem teto. Com inteiro comum, a carteira do leiloeiro estoura em R$ 21,47 milhões: a liquidação seguinte falharia, o lote ficaria preso como "ao vivo" e o dinheiro do vencedor ficaria comprometido para sempre. Achei isso tentando quebrar o sistema antes do commit dos testes. O backend converte para número comum ao responder, o que é exato até R$ 90 trilhões.
+O que descartei: pôr teto na carteira do leiloeiro, que travaria a liquidação do mesmo jeito quando chegasse ao teto.
+

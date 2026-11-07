@@ -54,3 +54,8 @@ Lote de outro leiloeiro, comprovante de outro licitante ou lote cancelado visto 
 - Tempo real (SSE): no máximo 20 conexões abertas por endereço e 2000 no total, para um só cliente não ocupar as vagas de todo mundo.
 - O cadastro avisa quando o e-mail já está em uso. É uma escolha consciente: sem confirmação por e-mail (fora do escopo do desafio), não há outro jeito de a pessoa saber por que o cadastro falhou. Para isso não virar uma forma de descobrir em massa quem tem conta, o cadastro tem o mesmo limite de tentativas do login. O login, por sua vez, nunca diz se o e-mail existe.
 - Erro inesperado responde mensagem genérica, sem stack trace.
+- Token de uma conta que não existe mais (apagada do banco) responde 401, e não erro interno.
+- O front codifica o id do lote antes de montar a URL da API, então um endereço como `/lotes/..%2F..%2Fauth%2Fme` não chama outra rota.
+- O front vai para o ar com cabeçalhos que impedem a página de ser aberta dentro de outro site (clickjacking), impedem o navegador de adivinhar o tipo de arquivo e não mandam o endereço de origem para outros sites.
+- O limite de tentativas usa o IP que o proxy do Render informa (`trust proxy` = 1). Rodando sem proxy, dá para trocar o IP mandando o cabeçalho X-Forwarded-For; por isso, depois do deploy, é preciso conferir que 11 logins seguidos com X-Forwarded-For diferente continuam bloqueados.
+- O token de login não tem revogação no servidor: sair apaga o token do navegador, e ele expira sozinho em 8 horas.

@@ -12,6 +12,8 @@ import { serverNow, syncServerClock } from '../lib/serverClock.js';
 const RECONNECT_MS = 5000;
 
 export default function useLotRoom(lotId) {
+  // O id vem da URL e pode ter qualquer coisa (ex.: "..%2Fauth"). Codificado, nunca vira outro caminho da API.
+  const path = `/lots/${encodeURIComponent(lotId)}`;
   const { user, isAuthenticated } = useAuth();
   const { refreshWallet } = useWallet();
   const isBidder = isAuthenticated && user?.role === 'BIDDER';
@@ -34,7 +36,7 @@ export default function useLotRoom(lotId) {
   const loadLot = useCallback(async () => {
     const id = ++lotRequest.current;
     try {
-      const data = await api.get(`/lots/${lotId}`, { auth: false });
+      const data = await api.get(path, { auth: false });
       if (!alive.current || id !== lotRequest.current) return true;
       setLot(data.lot);
       setStatus('ready');
@@ -50,17 +52,17 @@ export default function useLotRoom(lotId) {
       setStatus((current) => (current === 'ready' ? current : 'error'));
       return true;
     }
-  }, [lotId]);
+  }, [path]);
 
   const loadMe = useCallback(async () => {
     if (!isBidder) return;
     try {
-      const data = await api.get(`/lots/${lotId}/me`);
+      const data = await api.get(`${path}/me`);
       if (alive.current) setMe(data);
     } catch {
       // A posição é complemento; se falhar, a sala continua funcionando.
     }
-  }, [lotId, isBidder]);
+  }, [path, isBidder]);
 
   const refreshAll = useCallback(() => {
     loadLot();
@@ -111,7 +113,7 @@ export default function useLotRoom(lotId) {
     const control = { stopped: false };
 
     const connect = () => {
-      source = new EventSource(buildUrl(`/lots/${lotId}/stream`));
+      source = new EventSource(buildUrl(`${path}/stream`));
       const read = (event) => {
         const data = JSON.parse(event.data);
         if (data.serverNow) syncServerClock(data.serverNow);
@@ -163,7 +165,7 @@ export default function useLotRoom(lotId) {
       clearTimeout(retryTimer);
       source?.close();
     };
-  }, [lotId, applyBid, loadLot, loadMe, refreshAll, refreshWallet]);
+  }, [path, applyBid, loadLot, loadMe, refreshAll, refreshWallet]);
 
   return { lot, status, loadError, me, connection, freshSeqs, extendedAt, isBidder, loadLot, loadMe, applyBid, refreshAll };
 }
