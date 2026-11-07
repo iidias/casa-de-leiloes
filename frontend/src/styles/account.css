@@ -150,3 +150,22 @@
   .signature-seal > .badge { grid-column: 2; }
   .receipt-document > header, .receipt-document > footer { padding-inline: 20px; }
 }
+
+/* Adições para as telas reais (tarefas 92 e 93): estados que o protótipo não desenhou. */
+.audit-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.audit-top .back-link { margin-bottom: 0; }
+.audit-page > .alert { margin-bottom: 16px; }
+.audit-image-fallback { width: 112px; height: 112px; display: grid; place-items: center; color: var(--color-muted); background: var(--color-subtle); }
+.audit-empty { padding: 24px 20px; border-top: 1px solid var(--color-line); color: var(--color-muted); font-size: .875rem; }
+.signature-seal.invalid { border-color: #fda4af; color: var(--color-brand); background: #fff1f2; }
+.receipt-image-fallback { height: 280px; display: grid; place-items: center; color: var(--color-muted); background: var(--color-subtle); }
+.receipt-chain-warning { margin: -12px 32px 32px; }
+.receipt-audit-link { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 767px) {
+  .audit-image-fallback { width: 80px; height: 92px; }
+  .receipt-chain-warning { margin: -8px 20px 20px; }
+  .audit-lot > .badge { margin-top: 0; margin-bottom: 14px; justify-self: start; }
+}
+@media print {
+  .receipt-audit-link { text-decoration: none; }
+}

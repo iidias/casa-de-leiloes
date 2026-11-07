@@ -11,13 +11,15 @@ import LotRoom from './pages/LotRoom.jsx';
 import Wallet from './pages/Wallet.jsx';
 import MyBids from './pages/MyBids.jsx';
 import Register from './pages/Register.jsx';
+import Audit from './pages/Audit.jsx';
+import Receipt from './pages/Receipt.jsx';
 import NotFound from './pages/NotFound.jsx';
 
-// Provisório: cada rota ganha a tela de verdade nas tarefas 92 a 95,
+// Provisório: cada rota ganha a tela de verdade nas tarefas 94 e 95,
 // e este marcador sai quando a última tela entrar.
 function EmConstrucao({ tela }) {
   return (
-    <div className="page container">
+    <div className="page content">
       <Card>
         <EmptyState icon={Hammer} title={tela}>
           Esta tela ainda está sendo construída.
@@ -38,8 +40,8 @@ export default function App() {
         {/* Públicas: a API também não pede login para vitrine, sala, auditoria e comprovante. */}
         <Route path="/" element={<Lots />} />
         <Route path="/lotes/:id" element={<LotRoom />} />
-        <Route path="/lotes/:id/auditoria" element={<EmConstrucao tela="Auditoria do lote" />} />
-        <Route path="/c/:token" element={<EmConstrucao tela="Comprovante" />} />
+        <Route path="/lotes/:id/auditoria" element={<Audit />} />
+        <Route path="/c/:token" element={<Receipt />} />
 
         {/* Licitante */}
         <Route element={<ProtectedRoute roles={['BIDDER']} />}>
