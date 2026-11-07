@@ -133,16 +133,51 @@
   .countdown.urgent { color: var(--color-brand); }
   .empty-state.error > span { color: var(--color-brand); background: #fff1f2; }
 
+  /* Vitrine (protótipo: gallery-live.css) */
+  .tabs { display: flex; gap: 28px; margin-bottom: 32px; border-bottom: 1px solid var(--color-line); }
+  .tabs button { display: flex; align-items: center; gap: 8px; padding: 0 0 12px; border-bottom: 2px solid transparent; color: var(--color-copy); font-size: .875rem; font-weight: 500; white-space: nowrap; cursor: pointer; }
+  .tabs button.active { color: var(--color-brand); border-bottom-color: var(--color-brand); }
+  .tabs button span { min-width: 22px; padding: 2px 6px; border-radius: 2px; color: var(--color-copy); background: var(--color-subtle); font-size: .6875rem; text-align: center; }
+  .lot-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+  .lot-card { display: flex; flex-direction: column; overflow: hidden; transition: box-shadow 180ms ease, transform 180ms ease; }
+  .lot-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgb(0 0 0 / .1); }
+  .lot-image { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--color-subtle); }
+  .lot-image img { height: 100%; transition: transform 400ms ease; }
+  .lot-card:hover .lot-image img { transform: scale(1.025); }
+  .lot-image .badge { position: absolute; top: 12px; right: 12px; }
+  .lot-image .no-image { height: 100%; display: grid; place-items: center; color: var(--color-muted); }
+  .lot-body { flex: 1; min-height: 132px; padding: 16px; }
+  .lot-body h2 { display: -webkit-box; overflow: hidden; font-family: var(--font-sans); font-size: 1.125rem; font-weight: 600; letter-spacing: 0; line-height: 1.4; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  .lot-body p { margin-top: 4px; color: var(--color-copy); font-size: .875rem; }
+  .lot-body > span { display: block; margin-top: 10px; color: var(--color-muted); font-size: .75rem; }
+  .lot-footer { min-height: 106px; display: flex; align-items: end; justify-content: space-between; gap: 12px; padding: 16px; border-top: 1px solid var(--color-line); }
+  .lot-footer > div { display: grid; min-width: 0; }
+  .lot-footer span { color: var(--color-muted); font-size: .6875rem; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+  .lot-footer strong { margin-top: 2px; color: var(--color-brand); font-size: 1.125rem; font-variant-numeric: tabular-nums; }
+  .lot-footer small { margin-top: 2px; color: var(--color-copy); font-size: .75rem; white-space: nowrap; }
+  .skeleton-image { aspect-ratio: 4 / 3; border-radius: 0; }
+  .skeleton-title { width: 78%; height: 20px; }
+  .skeleton-copy { width: 48%; height: 14px; margin-top: 12px; }
+  .skeleton-value { width: 132px; height: 32px; }
+
   .site-footer { width: min(100% - 48px, 1280px); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; margin-inline: auto; padding-block: 32px; border-top: 1px solid var(--color-line); color: var(--color-muted); font-size: .75rem; }
   .site-footer p { text-align: center; }
 }
 
+@media (max-width: 1279px) {
+  .lot-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
 @media (max-width: 1023px) {
+  .lot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .account-name { display: none; }
   .site-header nav { gap: 18px; }
 }
 
 @media (max-width: 767px) {
+  .tabs { gap: 20px; overflow-x: auto; }
+  .lot-grid { grid-template-columns: 1fr; }
+  .lot-footer { align-items: center; }
   .content, .header-inner, .site-footer { width: min(100% - 32px, 1280px); }
   .page { padding-block: 32px 64px; }
   .page-title { margin-bottom: 24px; }

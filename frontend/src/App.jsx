@@ -6,10 +6,11 @@ import ProtectedRoute from './routes/ProtectedRoute.jsx';
 import Card from './components/Card.jsx';
 import EmptyState from './components/EmptyState.jsx';
 import Login from './pages/Login.jsx';
+import Lots from './pages/Lots.jsx';
 import Register from './pages/Register.jsx';
 import NotFound from './pages/NotFound.jsx';
 
-// Provisório: cada rota ganha a tela de verdade nas tarefas 87 a 95,
+// Provisório: cada rota ganha a tela de verdade nas tarefas 88 a 95,
 // e este marcador sai quando a última tela entrar.
 function EmConstrucao({ tela }) {
   return (
@@ -32,7 +33,7 @@ export default function App() {
 
       <Route element={<Layout />}>
         {/* Públicas: a API também não pede login para vitrine, sala, auditoria e comprovante. */}
-        <Route path="/" element={<EmConstrucao tela="Lotes" />} />
+        <Route path="/" element={<Lots />} />
         <Route path="/lotes/:id" element={<EmConstrucao tela="Sala do lote" />} />
         <Route path="/lotes/:id/auditoria" element={<EmConstrucao tela="Auditoria do lote" />} />
         <Route path="/c/:token" element={<EmConstrucao tela="Comprovante" />} />
