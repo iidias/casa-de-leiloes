@@ -1,4 +1,4 @@
-// Página 404 (o acabamento final é da tarefa 96).
+// Página 404 (tarefa 96). Leva cada papel para a sua tela inicial.
 import { SearchX } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { homePathForRole } from '../lib/format.js';

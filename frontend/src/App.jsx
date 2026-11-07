@@ -1,10 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
-import { Hammer } from 'lucide-react';
 
 import Layout from './components/Layout.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
-import Card from './components/Card.jsx';
-import EmptyState from './components/EmptyState.jsx';
 import Login from './pages/Login.jsx';
 import Lots from './pages/Lots.jsx';
 import LotRoom from './pages/LotRoom.jsx';
@@ -14,20 +11,8 @@ import Register from './pages/Register.jsx';
 import Audit from './pages/Audit.jsx';
 import Receipt from './pages/Receipt.jsx';
 import NotFound from './pages/NotFound.jsx';
-
-// Provisório: cada rota ganha a tela de verdade nas tarefas 94 e 95,
-// e este marcador sai quando a última tela entrar.
-function EmConstrucao({ tela }) {
-  return (
-    <div className="page content">
-      <Card>
-        <EmptyState icon={Hammer} title={tela}>
-          Esta tela ainda está sendo construída.
-        </EmptyState>
-      </Card>
-    </div>
-  );
-}
+import SellerDashboard from './pages/SellerDashboard.jsx';
+import NewLot from './pages/NewLot.jsx';
 
 export default function App() {
   return (
@@ -51,8 +36,8 @@ export default function App() {
 
         {/* Leiloeiro */}
         <Route element={<ProtectedRoute roles={['SELLER']} />}>
-          <Route path="/leiloeiro" element={<EmConstrucao tela="Painel do leiloeiro" />} />
-          <Route path="/leiloeiro/novo" element={<EmConstrucao tela="Novo lote" />} />
+          <Route path="/leiloeiro" element={<SellerDashboard />} />
+          <Route path="/leiloeiro/novo" element={<NewLot />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

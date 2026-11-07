@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import './styles/lot-room.css';
 import './styles/account.css';
+import './styles/seller.css';
 import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { WalletProvider } from './context/WalletContext.jsx';
