@@ -6,7 +6,7 @@ São 8 tabelas. Valores em dinheiro são sempre centavos inteiros (D3), e horár
 
 **Wallet** — uma por usuário. Guarda `totalCents` e `committedCents`; o disponível é a diferença e não é gravado. O banco impede, com CHECK, que o comprometido fique negativo ou maior que o total (D4).
 
-**LedgerEntry** — o extrato da carteira: depósito, débito de arremate, crédito de arremate e liberação por cancelamento. É o que explica de onde veio cada centavo do saldo total. Comprometer e liberar saldo durante a disputa não gera lançamento, porque não é dinheiro entrando nem saindo.
+**LedgerEntry** — o extrato da carteira: depósito, débito de arremate, crédito de arremate e liberação por cancelamento (este tipo existe no modelo, mas ainda não é usado: o cancelamento de lote com lances não foi implementado). É o que explica de onde veio cada centavo do saldo total. Comprometer e liberar saldo durante a disputa não gera lançamento, porque não é dinheiro entrando nem saindo.
 
 **Lot** — o lote. Tem uma cópia dos dados da obra (título, artista, data, técnica, dimensões, descrição), as regras definidas pelo leiloeiro (`startingPriceCents`, `minIncrementCents`, `startsAt`, `endsAt`, `originalEndsAt`) e o estado da disputa (`currentPriceCents`, `leaderId`, `bidCount`). Também guarda o topo da cadeia de auditoria (`headHash`, `headSeal`). O `status` só registra `ACTIVE`, `CANCELLED` ou `SETTLED`; agendado, ao vivo e encerrado são calculados pelo horário (D6).
 

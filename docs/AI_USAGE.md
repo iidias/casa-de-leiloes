@@ -1,39 +1,39 @@
 # Uso de IA neste projeto
 
+Usei IA como assistente de programação ao longo de todo o projeto. A maior parte do código do backend e do frontend foi escrita com o Claude a partir de decisões, regras e revisões minhas: eu defini o que construir, conferi cada etapa contra o PDF, testei à mão, rodei e commitei. A tabela abaixo diz, por área, o que a IA fez e o que ficou comigo.
+
 ## Ferramentas
-- Claude (Anthropic): leitura do desafio, planejamento, revisão de regras, documentação e código do backend (sempre revisado e testado por mim antes do commit).
-- Figma Make: geração das telas de média fidelidade e do código de protótipo em `docs/design/` (não é o frontend da aplicação).
+- **Claude (Anthropic):** leitura e planejamento do desafio, código do backend e do frontend, testes automatizados e documentação.
+- **Figma Make:** telas de média fidelidade e código de protótipo em `docs/design/` (não é o frontend da aplicação).
+- **Bruno:** cliente HTTP que usei para testar as rotas da API
 
 ## Onde usei
 
-| Parte | O que a IA fez | O que eu decidi ou revisei |
-|-------|----------------|----------------------------|
-| Leitura do PDF | Mapeou as regras de negócio obrigatórias do desafio (papéis, regras de lance, carteira, liquidação, auditoria, privacidade, telas e requisitos não funcionais) | Conferi o mapa contra o PDF e pedi uma segunda varredura só das regras que desclassificariam a entrega |
-| Plano de tarefas | Montou o plano de tarefas por dia, com um checklist de conformidade ligando cada exigência do PDF às tarefas | Revisei a ordem e o escopo; o plano fica fora do repositório |
-| Lições do desafio anterior | Transformou a devolutiva que recebi da Verzel em regras para este projeto: credencial assinada com HMAC e boa entropia, nenhuma credencial em rota pública e 404 para recurso de outra pessoa | A devolutiva e a leitura dela são minhas; conferi que cada ponto virou tarefa |
-| Anti-sniping | Apontou que "+2 minutos" tem duas leituras possíveis | Escolhi somar 2 minutos ao fim atual a cada lance tardio (D9) |
-| Lance inicial e incremento | Escreveu a regra do próximo lance mínimo | Pedi uma revisão específica para não confundir lance inicial, incremento mínimo e próximo lance mínimo. Isso tirou uma validação inventada ("incremento menor que o lance inicial") que recusaria lotes válidos |
-| Escolha da API | Comparou opções (Art Institute of Chicago, The Met, Discogs, Scryfall, Open Library, Pokémon TCG) | Fiquei com o Art Institute of Chicago (D2) |
-| Duração mínima do lote | Sugeriu baixar o mínimo de 10 para 2 minutos | Aceitei, para quem avalia conseguir ver anti-sniping e encerramento sem esperar |
-| Documentação de fluxo e dados | Escreveu o resumo do README, o FLOW.md e o ERD.md (8 tabelas) seguindo o plano | Conferi que o fluxo bate com as regras do PDF e com as decisões |
-| Técnica de auditoria | Escreveu o AUDIT.md: cadeia de hashes SHA-256, selo HMAC em cada lance, topo da cadeia selado no lote e selo no vínculo apelido → pessoa, com a tabela de ataques e os limites | Revisei os limites antes de aceitar, principalmente o caso de restaurar uma cópia antiga do lote, que só o comprovante detecta |
-| Segurança | Escreveu o SECURITY.md com cada valor sensível, as 4 chaves separadas e o link do comprovante assinado | Conferi que cada ponto da devolutiva do desafio anterior aparece ali |
-| Telas (Figma Make) | Mapeou o design system do projeto de ingressos, escreveu o prompt do Figma Make e revisou as telas geradas em duas rodadas, apontando estados que faltavam (as 5 recusas de lance, auditoria adulterada, sala por fase e papel) e um identificador interno exposto no comprovante | Escolhi reaproveitar o visual anterior, defini o nome leilõesPaintings, rodei as correções no Figma Make e aprovei as telas |
-| Base do backend | Criou o package.json, o prisma.config.ts (no mesmo formato do projeto anterior), o .env.example e o .env de desenvolvimento com os 4 segredos gerados por `openssl rand -base64 48` | Instalei as dependências e preenchi a connection string do Neon na minha máquina |
-| Validação do ambiente | Escreveu o src/config/env.js com Zod: o servidor não sobe se faltar variável, se um segredo tiver menos de 32 bytes ou se dois segredos forem iguais. Testou os três casos antes de entregar | Conferi as mensagens de erro |
-| Schema do banco | Escreveu o schema.prisma com as 8 tabelas do ERD.md e validou com `prisma validate` | Conferi tabela por tabela contra o ERD.md e o plano |
-| Migrations | Escreveu a migration manual com os 5 CHECKs de saldo e de lote, e me orientou quando o npm instalou o `prisma` 8 (versão de teste) junto com o `@prisma/client` 7 | Fixei o Prisma na 7.10.1, rodei as migrations no Neon e conferi as 8 tabelas no Prisma Studio e as 5 constraints no SQL Editor |
-| Base da API | Escreveu prisma.js, app.js, server.js, GET /health, as classes de erro de domínio, o errorHandler (sem stack trace, formato único `{ error: { code, message, details } }`), helmet, limite de 20 kb no JSON, `trust proxy` e os limitadores de login, depósito e lance. Subiu a API num ambiente de teste e conferiu /health, rota inexistente, JSON inválido, corpo grande demais e os headers do helmet | Subi a API na minha máquina com `npm run dev` e abri /health |
-| Autenticação | Escreveu cadastro (com "Sou leiloeiro") e login com bcrypt e JWT de 8h, carteira criada na mesma transação do usuário, login com mensagem genérica e comparação contra um hash fixo quando o e-mail não existe (mesmo tempo de resposta), middlewares auth e requireRole, GET /auth/me e validação estrita com Zod (campo extra como `role` é recusado). Testou tudo contra um PostgreSQL local: cadastro, e-mail repetido, campo extra, login certo e errado, tempo de resposta, token ausente, token adulterado, papel errado e rate limit | Por iniciativa própria, quis verificar com meus olhos e testei no Bruno, contra o banco do Neon, o cadastro (201 com token) e o GET /auth/me com o token no header Authorization (200 com meus dados) |
-| Auditoria antes de seguir | Revisou tudo o que foi feito até a tarefa 37 contra o PDF e apontou: três arquivos vazios commitados por acidente, o Figma Make faltando na lista de ferramentas, o cadastro sem limite de tentativas e o Prisma Client que não era gerado no `npm install` | Pedi essa revisão antes de continuar e aprovei as correções: removi os arquivos, limitei o cadastro e acrescentei o `postinstall` |
-| Estrutura inicial | Criou o .gitignore, a pasta docs e o texto das decisões D1 a D10 | Revisei o texto antes do primeiro commit, que fiz eu mesmo |
+| Área | O que a IA fez | O que eu decidi, revisei ou fiz |
+|---|---|---|
+| Planejamento | Mapeou as regras de negócio do PDF e montou um plano de trabalho com um checklist ligando cada exigência às tarefas | Conferi o mapa contra o PDF e pedi uma segunda varredura só das regras que desclassificariam a entrega |
+| Regras de negócio | Apontou pontos do PDF com mais de uma leitura e escreveu a regra do próximo lance mínimo | Escolhi somar 2 minutos ao fim atual a cada lance tardio (D9), fiquei com o Art Institute of Chicago (D2) e aceitei a duração mínima de 2 minutos para o avaliador ver anti-sniping e encerramento sem esperar. Pedi uma revisão específica para não confundir lance inicial, incremento e próximo mínimo, que removeu uma validação inventada que recusaria lotes válidos |
+| Lições do desafio anterior | Transformou a devolutiva que recebi da Verzel em regras de segurança: credencial assinada com HMAC e boa entropia, nenhuma credencial em rota pública e 404 para recurso de outra pessoa | A devolutiva e a leitura dela são minhas; conferi que cada ponto virou regra e código |
+| Documentação | Escreveu o FLOW.md, o ERD.md, o AUDIT.md (cadeia de hashes com selo HMAC, tabela de ataques e limites), o SECURITY.md e o texto do README | Revisei o conteúdo contra o código e as regras do PDF, principalmente os limites da auditoria (restaurar uma cópia antiga do lote só o comprovante detecta) |
+| Design | Mapeou o design system do meu projeto de ingressos, escreveu o prompt do Figma Make e revisou as telas em duas rodadas (faltavam as 5 recusas de lance, o estado "adulterado", a sala por fase e um identificador interno exposto no comprovante) | Escolhi reaproveitar o visual anterior, defini o nome leilõesPaintings, gerei as telas no Figma Make, apliquei as correções e aprovei |
+| Banco e migrations | Escreveu o `schema.prisma` com as 8 tabelas e a migration manual com os CHECKs de saldo e de lote | Conferi tabela por tabela contra o ERD.md, fixei o Prisma na 7.10.1 quando o npm instalou uma versão de teste, rodei as migrations no Neon e conferi as tabelas no Prisma Studio e as constraints no SQL Editor |
+| API, autenticação e catálogo | Escreveu a base da API (erros, helmet, limites, validação do ambiente com Zod), cadastro e login com JWT e bcrypt, e a integração com a API do Art Institute com timeout, cache e erro amigável | Testei no Bruno o cadastro, o `/auth/me` (inclusive com token adulterado de propósito), a busca na API, a criação de lote, a vitrine, o 404 para lote de outro leiloeiro, o cancelamento e a API fora do ar. Pedi a revisão que removeu três arquivos vazios commitados por acidente e limitou as tentativas de cadastro |
+| Carteira, lances e auditoria | Escreveu a carteira, o lance com trava de linha e relógio do banco, as 5 mensagens de recusa, o anti-sniping, os apelidos por lote e a cadeia de auditoria | Pedi cuidado máximo por ser o coração do desafio, testei no Bruno e só depois pedi testes de ataque (tokens forjados, corridas pelo mesmo saldo, 19 adulterações direto no banco) |
+| Liquidação, comprovante e tempo real | Escreveu a liquidação, o encerrador, o comprovante assinado, o link público com HMAC e o tempo real por SSE | Pedi uma releitura do PDF antes de começar e outra antes do commit, e testei o básico no Bruno |
+| Reaproveitamento do projeto anterior | Adaptou peças do meu projeto de ingressos, com crédito no código: o código assinado do ingresso virou o link do comprovante (agora com 128 bits e assinatura conferida antes do banco, a correção da devolutiva), a liberação de reservas vencidas virou a liquidação no primeiro acesso, e o seed virou o do leilão. No frontend, o cliente da API, o login guardado e as rotas protegidas | O código de base é do meu projeto anterior e a ideia de reaproveitar foi minha: perguntei o que servia, pedi o plano antes de qualquer código e aprovei |
+| Frontend | Montou o projeto React com Vite e Tailwind e as telas: login, vitrine, sala ao vivo, carteira, meus lances e arremates, comprovante e auditoria públicos e painel do leiloeiro, seguindo o protótipo | Pedi commits menores e conferência contra o PDF a cada etapa. Testei no navegador com duas contas disputando o mesmo lote |
+| Seed | Escreveu o seed (leiloeiro, 2 licitantes, lotes ao vivo, agendado e encerrado com comprovante) e o script que baixa as 4 obras para o seed não depender da API | Baixei as obras e rodei o seed contra o Neon. Os erros que reportei viraram duas correções: o servidor de imagens recusava o download e o seed parava sem mostrar o motivo |
+| Testes e segurança | Configurou o Vitest com banco só de teste e escreveu 37 testes das regras críticas (valor mínimo, líder, saldo comprometido, 20 lances simultâneos, anti-sniping, liquidação sem cobrar duas vezes, adulterações no banco, link do comprovante, 404 para recurso alheio). Rodou, à parte e fora do repositório, uma bateria de testes de ataque; ela achou e corrigiu o saldo do leiloeiro estourando em R$ 21,47 milhões (D16), erro interno com token de conta apagada e id de lote sem codificação no front | Pedi para tentar quebrar o sistema antes de commitar, criei a branch de testes no Neon e rodei a suíte nela, nunca no banco principal |
 
 ## O que fiz sem IA
-- Criação do repositório no GitHub
-- Revisão e commit de cada etapa
-- Testei a API do Art Institute por conta própria no Bruno: montei a requisição de busca com os parâmetros de filtro e de campos, e a de imagem, e conferi as respostas
-- Testei a autenticação por conta própria no Bruno: cadastrei um usuário, peguei o token da resposta e chamei o /auth/me com ele para confirmar que a API me reconhecia, e também testei aplicando modificação no token pra ocasionar um erro proposital 
-- [completar ao longo do projeto]
+- Criei o repositório no GitHub e fiz a revisão e o commit de cada etapa.
+- Configurei o banco no Neon (branch principal e branch de testes), preenchi o `.env` e rodei as migrations.
+- Li a devolutiva do desafio anterior, que virou a base das regras de segurança.
+- Escolhi o nome da marca e a direção visual.
+- Gerei as telas no Figma Make e apliquei as correções das duas rodadas.
+- Testei as rotas da API no Bruno: autenticação, catálogo, lotes, carteira, lances, auditoria, encerramento e comprovante.
+- Rodei o seed e reportei os erros que apareceram.
+- Rodei os testes automatizados e testei o fluxo no navegador com duas contas disputando o mesmo lote.
 
 ## O que aprendi
-- [completar no fim do projeto]
+- [PREENCHER com suas palavras: o que você aprendeu de concreto neste projeto]
