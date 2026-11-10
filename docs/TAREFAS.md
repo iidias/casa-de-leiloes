@@ -1,0 +1,109 @@
+# Tarefas do projeto
+
+Todas as tarefas estruturais e de documentação do projeto, concluídas.
+
+- [x] 1. Criar um repositório PÚBLICO no GitHub (casa-de-leiloes), com README inicial
+- [x] 2. Clonar o repositório dentro desta pasta (verzel/casa-de-leiloes)
+- [x] 3. Criar o arquivo .gitignore
+- [x] 4. Criar a pasta /docs com DECISIONS.md, FLOW.md, ERD.md, AUDIT.md, SECURITY.md e AI_USAGE.md
+- [x] 5. Registrar as decisões iniciais (D1 a D10) no DECISIONS.md
+- [x] 7. Escrever no README um parágrafo resumindo o sistema, com suas palavras
+- [x] 8. Escrever o fluxo no docs/FLOW.md
+- [x] 9. Escrever o modelo de dados (8 tabelas) no docs/ERD.md
+- [x] 10. Escrever a primeira versão do docs/AUDIT.md (técnica da cadeia de hashes)
+- [x] 11. Escrever o docs/SECURITY.md (credenciais, chaves, o que é público)
+- [x] 12. Testar a API do Art Institute of Chicago no navegador
+- [x] 14. Definir paleta, 2 fontes, escala de espaçamento e cores de estado do lote
+- [x] 15. Desenhar no Figma: vitrine, sala ao vivo, carteira e auditoria
+- [x] 16. Exportar os prints para docs/design/ e registrar a direção visual
+- [x] 18. Criar o banco no Neon (um para dev, um branch "test" para os testes)
+- [x] 19. Criar a pasta backend, inicializar o Node e instalar as dependências
+- [x] 20. Inicializar o Prisma, preencher o .env e o .env.example
+- [x] 21. Gerar os 4 segredos com openssl e criar src/config/env.js que valida tudo na subida
+- [x] 22. Escrever o schema.prisma com as 8 tabelas
+- [x] 23. Rodar a primeira migration
+- [x] 24. Criar uma migration manual com os CHECKs de dinheiro e saldo
+- [x] 25. Conferir as tabelas e as constraints no Prisma Studio / psql
+- [x] 27. Criar src/lib/prisma.js, src/app.js, src/server.js e GET /health
+- [x] 28. Criar o errorHandler e as classes de erro de domínio (NotFound, Conflict, BidRejected...)
+- [x] 29. Adicionar helmet, rate limit e limite de tamanho do JSON
+- [x] 31. Criar cadastro (com opção "Sou leiloeiro") e login (bcrypt + JWT)
+- [x] 32. Garantir login com mensagem genérica e tempo constante
+- [x] 33. Criar os middlewares auth e requireRole
+- [x] 34. Criar GET /auth/me
+- [x] 35. Criar a carteira automaticamente no cadastro (licitante e leiloeiro)
+- [x] 36. Testar login certo, errado, sem token, token adulterado e papel errado
+- [x] 38. Criar o service do Art Institute (busca e detalhe), normalizando a resposta
+- [x] 39. Adicionar timeout, cache de 10 min e erro 502 amigável
+- [x] 40. Criar as rotas de catálogo, só para leiloeiro
+- [x] 41. Criar o createLot com snapshot completo, incluindo a IMAGEM salva no banco
+- [x] 42. Criar a validação de criação de lote (valores, horários, duração)
+- [x] 43. Criar POST /seller/lots
+- [x] 44. Criar o cálculo de estado do lote (agendado / ao vivo / encerrado) a partir do horário
+- [x] 45. Criar GET /lots (vitrine pública, sem cancelados, separada por estado)
+- [x] 46. Criar GET /lots/:id (público, cancelado → 404) e GET /lots/:id/image
+- [x] 47. Criar GET /seller/lots e GET /seller/lots/:id (de outro leiloeiro → 404)
+- [x] 48. Criar POST /seller/lots/:id/cancel (só sem lances, à prova de corrida com o 1º lance)
+- [x] 49. Desligar a internet do backend (ou apontar a URL da API para um host inválido) e conferir vitrine e lote
+- [x] 51. Criar o service de carteira: saldo, depósito e extrato (ledger)
+- [x] 52. Criar GET /wallet e POST /wallet/deposits
+- [x] 53. Criar src/lib/money.js (validação de centavos) e src/lib/crypto.js (HMAC, timingSafeEqual)
+- [x] 54. Criar src/lib/auditChain.js (hash do lance, selo HMAC, verificação da cadeia)
+- [x] 55. Criar o placeBid: transação com trava de linha no lote e nas carteiras
+- [x] 56. Implementar as checagens do lance na ordem definida
+- [x] 57. Implementar comprometer/liberar saldo (novo líder e líder superado)
+- [x] 58. Implementar o anti-sniping dentro da mesma transação
+- [x] 59. Implementar apelido por lote (Licitante #1, #2...) na mesma transação
+- [x] 60. Criar POST /lots/:id/bids com respostas de recusa padronizadas
+- [x] 61. Criar Idempotency-Key no lance (duplo clique não vira dois lances)
+- [x] 62. Testar 20 lances simultâneos no mesmo lote
+- [x] 63. Testar o mesmo licitante dando lance em 2 lotes ao mesmo tempo sem saldo para os dois
+- [x] 64. Criar GET /lots/:id/audit (público) com a verificação servidor
+- [x] 65. Adulterar o banco à mão (UPDATE, DELETE no meio, DELETE no fim, INSERT) e ver a auditoria acusar cada um
+- [x] 67. Criar o settleLot: liquidação idempotente com trava de linha
+- [x] 68. Criar o "encerrador": varredura periódica + liquidação preguiçosa na leitura
+- [x] 69. Criar o comprovante assinado (Receipt) na liquidação
+- [x] 70. Criar o link de compartilhamento assinado (id + HMAC), conferido antes do lookup
+- [x] 71. Criar GET /me/bids, GET /me/wins e GET /me/receipts/:id (de outro → 404)
+- [x] 72. Criar POST /me/receipts/:id/share-link (gera e revoga o anterior)
+- [x] 73. Criar GET /public/receipts/:token (só o essencial, sem dado pessoal)
+- [x] 74. Criar GET /seller/summary (resultado de cada lote encerrado + total recebido)
+- [x] 75. Criar GET /lots/:id/stream (SSE) com lance novo, novo fim e encerramento
+- [x] 76. Criar GET /lots/:id/me (meu apelido, minha posição, se estou ganhando)
+- [x] 77. Devolver serverNow em toda resposta de lote (para a contagem regressiva)
+- [x] 78. Atualizar o seed: 1 leiloeiro, 2 licitantes com saldo, lote ao vivo com 2 lances, 1 agendado, 1 encerrado com comprovante
+- [x] 79. Testar o fluxo inteiro no curl/Postman antes de ir para o front
+- [x] 81. Criar o projeto frontend com Vite, Tailwind e react-router
+- [x] 82. Criar api/client.js, AuthContext, ProtectedRoute e as rotas no App.jsx
+- [x] 83. Criar os componentes base (Button, Card, Badge, Input, Money, Countdown, Spinner, EmptyState, ErrorState)
+- [x] 84. Criar lib/money.js do front (R$ ⇄ centavos) e lib/serverClock.js
+- [x] 86. Tela de login e cadastro, com atalhos das contas de teste
+- [x] 87. Vitrine com abas Ao vivo / Agendados / Encerrados
+- [x] 88. Sala do lote: lance atual, histórico, posição, contagem regressiva, ganhando/superado, via SSE
+- [x] 89. Formulário de lance já preenchido com o próximo lance mínimo e as 5 mensagens de recusa
+- [x] 90. Carteira: total, comprometido, disponível, depósito e extrato
+- [x] 91. Meus arremates: lotes em que dei lance + vencidos com comprovante e link
+- [x] 92. Página pública do comprovante
+- [x] 93. Página pública de auditoria (íntegro / adulterado, com verificação também no navegador)
+- [x] 94. Painel do leiloeiro: lotes, cancelar, resultados e total recebido
+- [x] 95. Criar lote em 2 passos (busca na API + formulário)
+- [x] 96. Layout com header, papel, saldo disponível (licitante) e logout; página 404
+- [x] 97. Conferir loading, vazio e erro em todas as telas
+- [x] 99. Instalar o Vitest e configurar o banco de teste
+- [x] 100. Escrever os testes das regras críticas
+- [x] 107. Escrever o README completo
+- [x] 108. Tabela de usuários de teste e roteiros de teste manual
+- [x] 109. Seção de comportamentos inesperados / limitações conhecidas
+- [x] 110. Finalizar AUDIT.md, SECURITY.md, AI_USAGE.md e revisar DECISIONS.md
+- [x] 112. Publicar o backend no Render (com os 4 segredos de produção, diferentes dos de dev)
+- [x] 113. Publicar o frontend na Vercel (com vercel.json)
+- [x] 114. Ajustar CORS_ORIGIN e APP_PUBLIC_URL
+- [x] 115. Rodar migrations e seed em produção
+- [x] 116. Testar o fluxo inteiro na URL pública, com 2 navegadores (licitante 1 e 2)
+- [x] 117. Testar a vitrine com a API externa fora do ar em produção
+- [x] 118. Clonar o próprio repositório numa pasta nova e seguir o README ao pé da letra
+- [x] 119. Passar o checklist de segurança
+- [x] 120. Conferir que nenhum segredo vazou nos commits
+- [x] 121. Remover console.log e código morto
+- [x] 122. Confirmar que o repositório está público
+- [x] 124. Passar o checklist de conformidade (seção 1.15) no DEPLOY, linha por linha
