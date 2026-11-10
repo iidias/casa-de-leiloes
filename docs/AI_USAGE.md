@@ -5,7 +5,7 @@ Usei IA como assistente de programação ao longo de todo o projeto. A maior par
 ## Ferramentas
 - **Claude (Anthropic):** leitura e planejamento do desafio, código do backend e do frontend, testes automatizados e documentação.
 - **Figma Make:** telas de média fidelidade e código de protótipo em `docs/design/` (não é o frontend da aplicação).
-- **Bruno:** cliente HTTP que usei para testar as rotas da API
+- **Bruno:** cliente HTTP que usei para testar as rotas da API por conta própria.
 
 ## Onde usei
 
@@ -24,6 +24,7 @@ Usei IA como assistente de programação ao longo de todo o projeto. A maior par
 | Frontend | Montou o projeto React com Vite e Tailwind e as telas: login, vitrine, sala ao vivo, carteira, meus lances e arremates, comprovante e auditoria públicos e painel do leiloeiro, seguindo o protótipo | Pedi commits menores e conferência contra o PDF a cada etapa. Testei no navegador com duas contas disputando o mesmo lote |
 | Seed | Escreveu o seed (leiloeiro, 2 licitantes, lotes ao vivo, agendado e encerrado com comprovante) e o script que baixa as 4 obras para o seed não depender da API | Baixei as obras e rodei o seed contra o Neon. Os erros que reportei viraram duas correções: o servidor de imagens recusava o download e o seed parava sem mostrar o motivo |
 | Testes e segurança | Configurou o Vitest com banco só de teste e escreveu 37 testes das regras críticas (valor mínimo, líder, saldo comprometido, 20 lances simultâneos, anti-sniping, liquidação sem cobrar duas vezes, adulterações no banco, link do comprovante, 404 para recurso alheio). Rodou, à parte e fora do repositório, uma bateria de testes de ataque; ela achou e corrigiu o saldo do leiloeiro estourando em R$ 21,47 milhões (D16), erro interno com token de conta apagada e id de lote sem codificação no front | Pedi para tentar quebrar o sistema antes de commitar, criei a branch de testes no Neon e rodei a suíte nela, nunca no banco principal |
+| Deploy | Ajudou a diagnosticar dois problemas: a migration que estourava o tempo pelo pooler do Neon (resolvido com a connection string direta) e o seed que falhava porque o encerrador da API no ar liquidava o lote encerrado no meio dos lances (resolvido suspendendo a API durante o seed) | Criei os serviços no Render e na Vercel, gerei os segredos de produção, configurei as variáveis e o CORS e rodei o seed em produção |
 
 ## O que fiz sem IA
 - Criei o repositório no GitHub e fiz a revisão e o commit de cada etapa.
@@ -34,6 +35,13 @@ Usei IA como assistente de programação ao longo de todo o projeto. A maior par
 - Testei as rotas da API no Bruno: autenticação, catálogo, lotes, carteira, lances, auditoria, encerramento e comprovante.
 - Rodei o seed e reportei os erros que apareceram.
 - Rodei os testes automatizados e testei o fluxo no navegador com duas contas disputando o mesmo lote.
+- Publiquei o backend no Render e o frontend na Vercel.
 
 ## O que aprendi
-- [PREENCHER com suas palavras: o que você aprendeu de concreto neste projeto]
+- **Decisões de arquitetura:** aprendi a ver, antes de construir, a necessidade de cada peça e a documentar as decisões, o que também guia melhor a IA. Ganhei confiança para escolher cada ferramenta pelo cenário de uso e pelo que ela traz ao negócio.
+- **Trabalho com IA:** aprendi a estruturar melhor os prompts para gerar código melhor e a analisar criticamente o código gerado, em vez de aceitá-lo como veio.
+- **Segurança:** aprendi a decidir com mais cuidado, a partir do alerta que recebi no desafio anterior sobre a segurança da autenticação (código de baixa entropia) e da sugestão de melhoria que acompanhou o alerta.
+- **API HTTP:** entendi melhor as rotas e os códigos de retorno, e como devolver mensagens de erro claras.
+- **Organização:** aprendi a documentar o projeto de forma mais formal e a mapear o fluxo de trabalho, do começo ao fim, para entregar um MVP.
+- **Reaproveitamento:** aprendi a reutilizar melhor componentes e código de um projeto anterior, com crédito.
+- **Deploy:** aprendi a publicar e configurar os serviços (Neon, Render e Vercel) e a resolver os problemas que só aparecem em produção.

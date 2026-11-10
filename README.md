@@ -6,9 +6,15 @@ Projeto do desafio técnico Elite Dev da Verzel.
 
 | | |
 |---|---|
-| **Aplicação (deploy)** | _a preencher após a publicação_ |
-| **API (deploy)** | _a preencher após a publicação_ |
+| **Aplicação (deploy)** | https://leiloespaintings.vercel.app |
+| **API (deploy)** | https://casa-de-leiloes-jq4l.onrender.com (`GET /health`) |
 | **Repositório** | front e back no mesmo repositório: `frontend/` e `backend/` |
+
+## Acesso rápido para avaliação
+
+1. Abra https://leiloespaintings.vercel.app. A API está no plano gratuito do Render, que "dorme" quando fica parada: o **primeiro acesso pode levar cerca de 50 s** para responder.
+2. Entre com uma das contas de demonstração (tabela em [Contas de demonstração](#contas-de-demonstração)). Os dados já estão carregados: um lote ao vivo com lances, um sem lances, um agendado e um encerrado com comprovante.
+3. Para ver a disputa em tempo real, use duas janelas (uma normal e uma anônima), cada uma com um licitante, no mesmo lote ao vivo.
 
 ## Funcionalidades
 
@@ -135,6 +141,22 @@ npm run dev                 # http://localhost:5173
 
 `VITE_API_URL` é lida **no build**: se mudar, é preciso gerar o build de novo. Build de produção: `npm run build` (saída em `frontend/dist`).
 
+## Publicação (deploy)
+
+| Peça | Onde | Configuração |
+|---|---|---|
+| Banco | Neon (PostgreSQL) | Uma branch para a aplicação e outra, separada, só para os testes |
+| Backend | Render (Web Service) | Raiz `backend` · build `npm install && npx prisma migrate deploy` · start `node src/server.js` · health check `/health` |
+| Frontend | Vercel | Raiz `frontend` · preset Vite · build `npm run build` · saída `dist` · `vercel.json` com o rewrite de SPA |
+
+Variáveis em produção:
+- **Render:** as mesmas do `backend/.env.example`, exceto `TEST_DATABASE_URL`. Os 4 segredos são diferentes dos de desenvolvimento, `CORS_ORIGIN` e `APP_PUBLIC_URL` apontam para o endereço da Vercel (sem barra no final) e `NODE_ENV=production`.
+- **Vercel:** `VITE_API_URL` com o endereço da API no Render (sem barra no final).
+
+Duas observações do Neon e do Render:
+- As migrations precisam da connection string **direta** do Neon (sem `-pooler` no host). Pela string com pooler, o `prisma migrate deploy` estoura o tempo ao pedir o lock do banco (erro `P1002`).
+- Trocar um segredo HMAC depois do seed faz a auditoria acusar todos os lotes como adulterados (ver [docs/SECURITY.md](docs/SECURITY.md)).
+
 ## Contas de demonstração
 
 Criadas por `npm run seed` (senha de demonstração, só para teste):
@@ -185,12 +207,13 @@ Use uma janela normal e uma anônima para ter dois usuários ao mesmo tempo (a s
 
 ## Comportamentos que podem surpreender
 
-- **Liquidação no fim do lote ou no primeiro acesso depois dele.** Um encerrador roda a cada 5 s; além dele, as leituras liquidam o lote vencido que encontrarem (D15). Em hospedagem que "dorme", o primeiro acesso depois do fim pode demorar um pouco e é ele quem fecha o lote.
+- **Liquidação no fim do lote ou no primeiro acesso depois dele.** Um encerrador roda a cada 5 s; além dele, as leituras liquidam o lote vencido que encontrarem (D15). No Render gratuito, que dorme depois de 15 minutos sem acesso, o encerrador não roda: o primeiro acesso depois do fim demora cerca de 50 s e é ele quem fecha o lote.
 - **Prorrogação sem limite.** Cada lance nos últimos 2 minutos soma 2 minutos ao fim atual, quantas vezes acontecer (D9).
 - **Apelido por lote.** O mesmo licitante é "Licitante #1" num lote e pode ser "Licitante #3" em outro, de propósito (privacidade, D8).
 - **Gerar novo link de comprovante invalida o anterior** na hora.
 - **Uma sessão por navegador** (token no `localStorage`). Para usar dois perfis ao mesmo tempo, use uma janela anônima.
 - **Um e-mail, um papel.** Para ter acesso de leiloeiro e de licitante, são duas contas.
+- **Não rode o seed num banco que uma API no ar já está usando.** O encerrador da API liquida, a cada 5 s, qualquer lote vencido que encontrar. O seed cria o lote encerrado com lances no passado, então a API pode liquidá-lo no meio dos lances e o seed falha com `LOT_ENDED`. Antes de semear um banco em produção, suspenda a API (no Render, *Suspend Service*) e retome depois. Rodando local, com a API desligada, isso não acontece.
 - **O lote "ao vivo" do seed termina 30 dias depois do seed.** Passado esse prazo, rode o seed de novo.
 - **Duração mínima do lote: 2 minutos.** Horários são enviados com fuso e mostrados no horário de Brasília (D12).
 - **Limites de depósito:** de R$ 1 a R$ 100.000 por depósito, e saldo total de licitante até R$ 10 milhões (D14).
