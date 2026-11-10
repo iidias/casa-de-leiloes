@@ -155,6 +155,7 @@ Variáveis em produção:
 
 Duas observações do Neon e do Render:
 - As migrations precisam da connection string **direta** do Neon (sem `-pooler` no host). Pela string com pooler, o `prisma migrate deploy` estoura o tempo ao pedir o lock do banco (erro `P1002`).
+- Opcional, só no Render: `PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK=1`. Com o Neon "dormindo", o build pode falhar com `P1002` ao pedir o lock do `prisma migrate deploy`; a variável pula esse lock (ver D17 em [docs/DECISIONS.md](docs/DECISIONS.md)). Não é necessária para rodar localmente.
 - Trocar um segredo HMAC depois do seed faz a auditoria acusar todos os lotes como adulterados (ver [docs/SECURITY.md](docs/SECURITY.md)).
 
 ## Contas de demonstração
