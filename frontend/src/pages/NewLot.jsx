@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Check, ImageOff, Search, SearchX } from 'lucide-react';
-import { api, fieldErrorsFrom } from '../api/client.js';
+import { api, buildUrl, fieldErrorsFrom } from '../api/client.js';
 import { formatDateTime } from '../lib/format.js';
 import { formatBRL, toCents } from '../lib/money.js';
 import { serverNow } from '../lib/serverClock.js';
@@ -215,7 +215,7 @@ function CatalogCard({ item, onSelect }) {
           <ImageOff size={28} aria-label="Imagem indisponível" />
         </span>
       ) : (
-        <img className="artwork-image" src={item.imageUrl} alt="" loading="lazy" onError={() => setImageFailed(true)} />
+        <img className="artwork-image" src={buildUrl(`/catalog/${item.externalId}/image`)} alt="" loading="lazy" onError={() => setImageFailed(true)} />
       )}
       <span className="catalog-info">
         <strong>{item.title}</strong>
@@ -315,7 +315,7 @@ function LotForm({ item, onBack, onCreated }) {
             <ImageOff size={32} aria-label="Imagem indisponível" />
           </span>
         ) : (
-          <img className="artwork-image" src={item.imageUrl} alt={item.title} onError={() => setImageFailed(true)} />
+          <img className="artwork-image" src={buildUrl(`/catalog/${item.externalId}/image`)} alt={item.title} onError={() => setImageFailed(true)} />
         )}
         <div>
           <span className="eyebrow">Obra escolhida</span>
