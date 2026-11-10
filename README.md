@@ -87,7 +87,7 @@ Ao encerrar, o valor é debitado do vencedor, creditado ao leiloeiro e o comprov
 
 ```bash
 cd backend
-npm install        # também executa "prisma generate"
+npm install       
 cp .env.example .env
 ```
 
@@ -122,10 +122,10 @@ node -e "console.log(require('crypto').randomBytes(48).toString('base64'))"
 Confira o `.env`, aplique as migrations e suba a API:
 
 ```bash
-npm run check:env           # valida as variáveis
-npx prisma migrate deploy   # cria as tabelas e as constraints de saldo
-npm run seed                # dados de demonstração (opcional, ver abaixo)
-npm run dev                 # API em http://localhost:3000  (GET /health)
+npm run check:env       
+npx prisma migrate deploy   
+npm run seed             
+npm run dev                
 ```
 
 > **Atenção:** `migrate deploy` e `seed` usam a `DATABASE_URL` do `.env`. Confira para qual banco ela aponta antes de rodar.
@@ -135,8 +135,8 @@ npm run dev                 # API em http://localhost:3000  (GET /health)
 ```bash
 cd frontend
 npm install
-cp .env.example .env        # VITE_API_URL=http://localhost:3000
-npm run dev                 # http://localhost:5173
+cp .env.example .env     
+npm run dev            
 ```
 
 `VITE_API_URL` é lida **no build**: se mudar, é preciso gerar o build de novo. Build de produção: `npm run build` (saída em `frontend/dist`).
